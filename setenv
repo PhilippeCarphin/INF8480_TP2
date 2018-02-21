@@ -1,6 +1,0 @@
-# Fichier pour definir l'environnement pour le TP
-# Pour l'utiliser, faire
-# source setenv
-
-# Alias pour se connecter à la machine distante
-alias connect='ssh -i ~/.ssh/id_rsa ubuntu@132.207.12.84'

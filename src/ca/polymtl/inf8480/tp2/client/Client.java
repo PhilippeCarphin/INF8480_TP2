@@ -1,4 +1,4 @@
-package ca.polymtl.inf8480.tp1.client;
+package ca.polymtl.inf8480.tp2.client;
 
 import java.rmi.AccessException;
 import java.rmi.NotBoundException;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import ca.polymtl.inf8480.tp1.shared.ServerInterface;
+import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 
 public class Client {
 

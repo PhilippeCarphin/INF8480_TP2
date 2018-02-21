@@ -1,4 +1,4 @@
-package ca.polymtl.inf8480.tp2.server;
+package ca.polymtl.inf8480.tp2.dispatcher;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,14 +26,14 @@ import java.util.Collections;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
-public class Server implements ServerInterface {
+public class Dispatcher implements ServerInterface {
 
 	public static void main(String[] args) {
-		Server server = new Server();
-		server.run();
+		Dispatcher dispatcher = new Dispatcher();
+		dispatcher.run();
 	}
 
-	public Server() {
+	public Dispatcher() {
 		super();
 	}
 
