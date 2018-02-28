@@ -59,10 +59,12 @@ public class Dispatcher implements DispatcherInterface {
 		}
 	}
 
-	//TODO répartition des taches lors de pannes intempestives
+
 
 	public int[] dispatchTasks(String[] tasks) throws RemoteException
 	{
+		//TODO répartition des taches
+		//TODO répartition des taches lors de pannes intempestives
 		return null;
 	}
 

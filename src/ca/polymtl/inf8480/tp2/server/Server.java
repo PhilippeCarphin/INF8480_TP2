@@ -30,6 +30,8 @@ import java.io.BufferedReader;
 public class Server implements ServerInterface {
 
 	public static void main(String[] args) {
+		//TODO ajouter paramètre de fiabilité (% de fois où le serveur va renvoyer un résultat faux)
+
 		Server server = new Server();
 		server.run();
 	}
