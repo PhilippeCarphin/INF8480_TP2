@@ -29,6 +29,9 @@ import java.io.BufferedReader;
 public class Dispatcher implements DispatcherInterface {
 
 	public static void main(String[] args) {
+
+		//TODO ajouter comme arg le mdp, pass (et pouvoir lister les serveurs?)
+
 		Dispatcher dispatcher = new Dispatcher();
 		dispatcher.run();
 	}
@@ -43,15 +46,13 @@ public class Dispatcher implements DispatcherInterface {
 		}
 
 		try {
-			DispatcherInterface stub = (DispatcherInterface) UnicastRemoteObject
-					.exportObject(this, 0);
+			DispatcherInterface stub = (DispatcherInterface) UnicastRemoteObject.exportObject(this, 0);
 
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("server", stub);
 			System.out.println("Server ready.");
 		} catch (ConnectException e) {
-			System.err
-					.println("Impossible de se connecter au registre RMI. Est-ce que rmiregistry est lancé?");
+			System.err.println("Impossible de se connecter au registre RMI. Est-ce que rmiregistry est lancé?");
 			System.err.println();
 			System.err.println("Erreur: " + e.getMessage());
 		} catch (Exception e) {
@@ -65,6 +66,7 @@ public class Dispatcher implements DispatcherInterface {
 	{
 		//TODO répartition des taches
 		//TODO répartition des taches lors de pannes intempestives
+		//TODO calculer la charge des serveurs
 		return null;
 	}
 

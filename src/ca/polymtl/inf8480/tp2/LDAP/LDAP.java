@@ -34,6 +34,7 @@ public class LDAP implements LDAPInterface {
 
     public static void main(String[] args)
     {
+        //TODO modifier les adresses des serveurs
         idMap.put("alice", "apassword");
         idMap.put("bob", "bpassword");
 

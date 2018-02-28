@@ -20,6 +20,9 @@ import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 public class Client {
 
 	public static void main(String[] args) {
+
+		//TODO ajouter comme arg l'adresse du dispatcher (et pouvoir lister les serveurs?)
+
 		if( args.length <= 1 )
 		{
 			System.out.println("\nUsage : client hostname command [arg]\n");
