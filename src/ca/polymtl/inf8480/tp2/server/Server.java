@@ -59,4 +59,7 @@ public class Server implements ServerInterface {
 		}
 	}
 
+	@Override
+	public int[] compute(String[] operations, String mode) {return null;}
+
 }
