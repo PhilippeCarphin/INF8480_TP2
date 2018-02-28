@@ -16,6 +16,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
+import ca.polymtl.inf8480.tp2.server.Operations;
 import sun.security.ssl.Debug;
 
 import java.io.FileWriter;
@@ -43,15 +44,13 @@ public class Server implements ServerInterface {
 		}
 
 		try {
-			ServerInterface stub = (ServerInterface) UnicastRemoteObject
-					.exportObject(this, 0);
+			ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(this, 0);
 
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("server", stub);
 			System.out.println("Server ready.");
 		} catch (ConnectException e) {
-			System.err
-					.println("Impossible de se connecter au registre RMI. Est-ce que rmiregistry est lancer");
+			System.err.println("Impossible de se connecter au registre RMI. Est-ce que rmiregistry est lancer");
 			System.err.println();
 			System.err.println("Erreur: " + e.getMessage());
 		} catch (Exception e) {
@@ -60,6 +59,24 @@ public class Server implements ServerInterface {
 	}
 
 	@Override
-	public int[] compute(String[] operations, String mode) {return null;}
+	public int[] compute(String[] operations, String mode) 
+	{
+		int opNum = operations.length;
+		int[] results = new int[opNum];
+
+		for (int i = 0; i < opNum; i++)
+		{
+			if (operations[i].split(" ")[0].equals("prime"))
+			{
+				results[i] = Operations.prime(Integer.parseInt(operations[i].split(" ")[1]));
+			}
+			else
+			{
+				results[i] = Operations.pell(Integer.parseInt(operations[i].split(" ")[1]));
+			}
+		}
+
+		return null;
+	}
 
 }

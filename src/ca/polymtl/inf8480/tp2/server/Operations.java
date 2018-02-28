@@ -6,6 +6,9 @@
  * @author Simon Delisle et Francois Doray
  *
  */
+
+package ca.polymtl.inf8480.tp2.server;
+
 public class Operations {
 
 	public static int pell(int x) {
