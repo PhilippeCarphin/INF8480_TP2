@@ -5,5 +5,5 @@ import java.rmi.RemoteException;
 
 
 public interface ServerInterface extends Remote {
-    int[] compute(String[] operations, String mode);
+    int[] compute(String[] operations, String mode, String user, String password);
 }

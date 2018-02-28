@@ -59,24 +59,31 @@ public class Server implements ServerInterface {
 	}
 
 	@Override
-	public int[] compute(String[] operations, String mode) 
+	public int[] compute(String[] operations, String mode, String user, String password) 
 	{
 		int opNum = operations.length;
 		int[] results = new int[opNum];
 
-		for (int i = 0; i < opNum; i++)
+		//TODO calcul du nombre de taches et refus éventuel
+		//TODO mode non sécurisé
+		//TODO authentifier le répartiteur auprès du LDAP
+
+		if (mode.equals("secured"))
 		{
-			if (operations[i].split(" ")[0].equals("prime"))
+			for (int i = 0; i < opNum; i++)
 			{
-				results[i] = Operations.prime(Integer.parseInt(operations[i].split(" ")[1]));
-			}
-			else
-			{
-				results[i] = Operations.pell(Integer.parseInt(operations[i].split(" ")[1]));
+				if (operations[i].split(" ")[0].equals("prime"))
+				{
+					results[i] = Operations.prime(Integer.parseInt(operations[i].split(" ")[1]));
+				}
+				else
+				{
+					results[i] = Operations.pell(Integer.parseInt(operations[i].split(" ")[1]));
+				}
 			}
 		}
 
-		return null;
+		return results;
 	}
 
 }

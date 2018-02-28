@@ -59,4 +59,6 @@ public class Dispatcher implements DispatcherInterface {
 		}
 	}
 
+	//TODO répartition des taches lors de pannes intempestives
+
 }
