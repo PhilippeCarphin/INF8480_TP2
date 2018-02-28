@@ -72,7 +72,7 @@ public class LDAP implements LDAPInterface {
     /* RMI methods */
 
     @Override
-    public boolean authenticate(String user, String password)
+    public boolean authenticate(String user, String password) throws RemoteException
     {
         if (password.equals(idMap.get(user)))
             return true;
@@ -81,7 +81,7 @@ public class LDAP implements LDAPInterface {
     }
 
     @Override
-    public String[] listServers()
+    public String[] listServers() throws RemoteException
     {
         return servers;
     }

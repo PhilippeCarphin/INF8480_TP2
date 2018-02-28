@@ -5,6 +5,6 @@ import java.rmi.RemoteException;
 
 
 public interface LDAPInterface extends Remote {
-    boolean authenticate(String user, String password);
-    String[] listServers();
+    boolean authenticate(String user, String password) throws RemoteException;
+    String[] listServers() throws RemoteException;
 }

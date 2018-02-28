@@ -59,7 +59,7 @@ public class Server implements ServerInterface {
 	}
 
 	@Override
-	public int[] compute(String[] operations, String mode, String user, String password) 
+	public int[] compute(String[] operations, String mode, String user, String password) throws RemoteException
 	{
 		int opNum = operations.length;
 		int[] results = new int[opNum];
