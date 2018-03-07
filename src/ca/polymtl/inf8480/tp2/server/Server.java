@@ -16,6 +16,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Random;
 
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 import ca.polymtl.inf8480.tp2.shared.LDAPInterface;
@@ -128,6 +129,30 @@ public class Server implements ServerInterface {
 				else
 				{
 					results[i] = Operations.pell(Integer.parseInt(operations[i].split(" ")[1]));
+				}
+			}
+		}
+		else
+		{
+			//On calcule quand même la valeur pour avoir un temps de calcul identique qu'il y ait des erreurs ou non
+			for (int i = 0; i < opNum; i++)
+			{
+				if (operations[i].split(" ")[0].equals("prime"))
+				{
+					results[i] = Operations.prime(Integer.parseInt(operations[i].split(" ")[1]));
+				}
+				else
+				{
+					results[i] = Operations.pell(Integer.parseInt(operations[i].split(" ")[1]));
+				}
+
+				Random rand = new Random();
+				int  n = rand.nextInt(100) + 1;
+
+				if (n <= errorRate)
+				{
+					rand = new Random();
+					results[i] = rand.nextInt(4001);
 				}
 			}
 		}
