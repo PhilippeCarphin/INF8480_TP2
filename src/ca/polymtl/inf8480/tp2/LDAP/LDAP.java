@@ -56,11 +56,11 @@ public class LDAP implements LDAPInterface {
 		}
 
 		try {
-			LDAPInterface stub = (LDAPInterface) UnicastRemoteObject.exportObject(this, 0);
+			LDAPInterface stub = (LDAPInterface) UnicastRemoteObject.exportObject(this, 5012);
 
 			Registry registry = LocateRegistry.getRegistry();
-			registry.rebind("server", stub);
-			System.out.println("Server ready.");
+			registry.rebind("LDAP", stub);
+			System.out.println("LDAP ready.");
 		} catch (ConnectException e) {
 			System.err.println("Impossible de se connecter au registre RMI. Est-ce que rmiregistry est lancé?");
 			System.err.println();

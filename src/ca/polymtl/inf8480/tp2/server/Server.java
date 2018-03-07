@@ -2,6 +2,8 @@ package ca.polymtl.inf8480.tp2.server;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,6 +18,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
+import ca.polymtl.inf8480.tp2.shared.LDAPInterface;
 import ca.polymtl.inf8480.tp2.server.Operations;
 import sun.security.ssl.Debug;
 
@@ -29,6 +32,9 @@ import java.io.BufferedReader;
 
 public class Server implements ServerInterface {
 
+	private String LDAPHostname = "127.0.0.1";
+	private LDAPInterface LDAPServerStub = null;
+
 	public static void main(String[] args) {
 		//TODO ajouter paramètre de fiabilité (% de fois où le serveur va renvoyer un résultat faux)
 
@@ -38,6 +44,7 @@ public class Server implements ServerInterface {
 
 	public Server() {
 		super();
+		LDAPServerStub = loadLDAPStub(LDAPHostname);
 	}
 
 	private void run() {
@@ -46,7 +53,7 @@ public class Server implements ServerInterface {
 		}
 
 		try {
-			ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(this, 0);
+			ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(this, 5012);
 
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("server", stub);
@@ -60,6 +67,24 @@ public class Server implements ServerInterface {
 		}
 	}
 
+	private LDAPInterface loadLDAPStub(String hostname) {
+		LDAPInterface stub = null;
+
+		try {
+			System.out.println("Calling LocateRegistry.getRegistry("+ hostname + ")\n");
+			Registry registry = LocateRegistry.getRegistry(hostname);
+			stub = (LDAPInterface) registry.lookup("LDAP");
+		} catch (NotBoundException e) {
+			System.out.println("Erreur: Le nom '" + e.getMessage()+ "' n'est pas defini dans le registre.");
+		} catch (AccessException e) {
+			System.out.println("Erreur: " + e.getMessage());
+		} catch (RemoteException e) {
+			System.out.println("Erreur: " + e.getMessage());
+		}
+
+		return stub;
+	}
+
 	@Override
 	public int[] compute(String[] operations, String mode, String user, String password) throws RemoteException
 	{
@@ -68,10 +93,20 @@ public class Server implements ServerInterface {
 
 		//TODO calcul du nombre de taches et refus éventuel
 		//TODO mode non sécurisé
-		//TODO authentifier le répartiteur auprès du LDAP
 
 		if (mode.equals("secured"))
 		{
+			//Authenticate to the LDAP server, throws exceptions if anything happens
+			try
+			{
+				if (!LDAPServerStub.authenticate(user, password))
+					return null;
+			}
+			catch (RemoteException e)
+			{
+				throw new RemoteException();
+			}
+
 			for (int i = 0; i < opNum; i++)
 			{
 				if (operations[i].split(" ")[0].equals("prime"))

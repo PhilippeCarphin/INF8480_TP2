@@ -28,9 +28,13 @@ import java.io.BufferedReader;
 
 public class Dispatcher implements DispatcherInterface {
 
+	private static String user = "";
+	private static String password = "";
+
 	public static void main(String[] args) {
 
 		//TODO ajouter comme arg le mdp, pass (et pouvoir lister les serveurs?)
+		parseArgs(args);
 
 		Dispatcher dispatcher = new Dispatcher();
 		dispatcher.run();
@@ -46,11 +50,11 @@ public class Dispatcher implements DispatcherInterface {
 		}
 
 		try {
-			DispatcherInterface stub = (DispatcherInterface) UnicastRemoteObject.exportObject(this, 0);
+			DispatcherInterface stub = (DispatcherInterface) UnicastRemoteObject.exportObject(this, 5012);
 
 			Registry registry = LocateRegistry.getRegistry();
-			registry.rebind("server", stub);
-			System.out.println("Server ready.");
+			registry.rebind("dispatcher", stub);
+			System.out.println("Dispatcher ready.");
 		} catch (ConnectException e) {
 			System.err.println("Impossible de se connecter au registre RMI. Est-ce que rmiregistry est lancé?");
 			System.err.println();
@@ -60,9 +64,25 @@ public class Dispatcher implements DispatcherInterface {
 		}
 	}
 
+	private static void parseArgs(String[] args)
+	{
+		if (args.length == 0)
+			System.out.println("You did not pass any arguments to the dispatcher so it can only works in unsecured mode.\n");
+		else if (args.length == 2)
+		{
+			System.out.println("Passing username and password to the dispatcher. It can works in secured and unsecured mode.\n");
+			user = args[0];
+			password = args[1];
+		}
+		else
+		{
+			System.out.println("You need to pass either 2 arguments (username and password) or 0.\n");
+			System.exit(1);
+		}
+	}
 
-
-	public int[] dispatchTasks(String[] tasks) throws RemoteException
+	@Override
+	public int[] dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException
 	{
 		//TODO répartition des taches
 		//TODO répartition des taches lors de pannes intempestives
