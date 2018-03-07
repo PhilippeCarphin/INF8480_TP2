@@ -38,8 +38,6 @@ public class Server implements ServerInterface {
 	private static int errorRate = 0;
 
 	public static void main(String[] args) {
-		//TODO ajouter paramètre de fiabilité (% de fois où le serveur va renvoyer un résultat faux)
-
 		parseArgs(args);
 
 		Server server = new Server();
@@ -105,7 +103,6 @@ public class Server implements ServerInterface {
 		int[] results = new int[opNum];
 
 		//TODO calcul du nombre de taches et refus éventuel
-		//TODO mode non sécurisé
 
 		if (mode.equals("secured"))
 		{
