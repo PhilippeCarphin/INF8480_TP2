@@ -34,9 +34,12 @@ public class Server implements ServerInterface {
 
 	private String LDAPHostname = "127.0.0.1";
 	private LDAPInterface LDAPServerStub = null;
+	private static int errorRate = 0;
 
 	public static void main(String[] args) {
 		//TODO ajouter paramètre de fiabilité (% de fois où le serveur va renvoyer un résultat faux)
+
+		parseArgs(args);
 
 		Server server = new Server();
 		server.run();
@@ -83,6 +86,15 @@ public class Server implements ServerInterface {
 		}
 
 		return stub;
+	}
+
+	private static void parseArgs(String[] args)
+	{
+		if (args.length != 1)
+			System.out.println("You need to pass an argument to determine the error rate (0 - 100).\n");
+		else
+			errorRate = Integer.parseInt(args[0]);
+
 	}
 
 	@Override
