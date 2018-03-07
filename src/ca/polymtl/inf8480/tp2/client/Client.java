@@ -19,18 +19,13 @@ import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 
 public class Client {
 
+	private static String dispatcherIp = "127.0.0.1";
+
 	public static void main(String[] args) {
 
 		//TODO ajouter comme arg l'adresse du dispatcher (et pouvoir lister les serveurs?)
 
-		if( args.length <= 1 )
-		{
-			System.out.println("\nUsage : client hostname command [arg]\n");
-		}
-		else
-		{
-			String distantHostname = args[0];
-		}
+		parseArgs(args);
 	}
 
 	private ServerInterface distantServerStub = null;
@@ -71,6 +66,19 @@ public class Client {
 		}
 
 		return stub;
+	}
+
+	private static void parseArgs(String[] args)
+	{
+		if (args.length == 0)
+		{
+			System.out.println("Usign default dispatcher ip (127.0.0.1).\n");
+		}
+		else if (args.length == 1)
+		{
+			System.out.println("Using dispatcher ip : " + args[0]+ ".\n");
+			dispatcherIp = args[0];
+		}
 	}
 
 }
