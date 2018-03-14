@@ -87,6 +87,7 @@ public class Server implements ServerInterface {
 		return stub;
 	}
 
+	//On parse le taux d'erreurs qu'on désire au lancement du serveur de calcul
 	private static void parseArgs(String[] args)
 	{
 		if (args.length != 1)

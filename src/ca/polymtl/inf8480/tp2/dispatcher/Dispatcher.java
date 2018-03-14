@@ -67,6 +67,7 @@ public class Dispatcher implements DispatcherInterface {
 
 	private static void parseArgs(String[] args)
 	{
+		//On parse les arguments au répartiteur pour choisir son mode de fonctionnement
 		if (args.length == 0)
 			System.out.println("You did not pass any arguments to the dispatcher so it can only works in unsecured mode.\n");
 		else if (args.length == 2)
@@ -89,6 +90,8 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO répartition des taches lors de pannes intempestives
 		//TODO calculer la charge des serveurs
 		//TODO appeler la classe compute callable pour créer les threads (ref : https://www.journaldev.com/1090/java-callable-future-example)
+		//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
+		//TODO vérification de la justesse des calculs
 
 		return null;
 	}

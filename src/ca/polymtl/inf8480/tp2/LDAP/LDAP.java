@@ -72,6 +72,7 @@ public class LDAP implements LDAPInterface {
     
     /* RMI methods */
 
+    //Authentification d'un utilisateur auprès du serveur
     @Override
     public boolean authenticate(String user, String password) throws RemoteException
     {
@@ -81,6 +82,7 @@ public class LDAP implements LDAPInterface {
             return false;
     }
 
+    //Liste des serveurs
     @Override
     public String[] listServers() throws RemoteException
     {
