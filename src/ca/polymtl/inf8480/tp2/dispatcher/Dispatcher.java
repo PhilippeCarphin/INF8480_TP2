@@ -16,6 +16,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import ca.polymtl.inf8480.tp2.shared.DispatcherInterface;
+import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 import sun.security.ssl.Debug;
 
 import java.io.FileWriter;
@@ -87,6 +88,7 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO répartition des taches
 		//TODO répartition des taches lors de pannes intempestives
 		//TODO calculer la charge des serveurs
+
 		return null;
 	}
 
