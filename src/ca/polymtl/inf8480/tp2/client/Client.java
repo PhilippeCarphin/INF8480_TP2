@@ -72,7 +72,7 @@ public class Client {
 	{
 		if (args.length == 0)
 		{
-			System.out.println("Usign default dispatcher ip (127.0.0.1).\n");
+			System.out.println("Using default dispatcher ip (127.0.0.1).\n");
 		}
 		else if (args.length == 1)
 		{

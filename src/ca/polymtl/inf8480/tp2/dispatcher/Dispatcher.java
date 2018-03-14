@@ -88,6 +88,7 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO répartition des taches
 		//TODO répartition des taches lors de pannes intempestives
 		//TODO calculer la charge des serveurs
+		//TODO appeler la classe compute callable pour créer les threads (ref : https://www.journaldev.com/1090/java-callable-future-example)
 
 		return null;
 	}
