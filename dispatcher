@@ -8,4 +8,4 @@ popd > /dev/null
 java -cp "$basepath"/dispatcher.jar:"$basepath"/shared.jar \
   -Djava.rmi.server.codebase=file:"$basepath"/shared.jar \
   -Djava.security.policy="$basepath"/policy \
-  ca.polymtl.inf8480.tp1.dispatcher.Dispatcher
+  ca.polymtl.inf8480.tp2.dispatcher.Dispatcher
