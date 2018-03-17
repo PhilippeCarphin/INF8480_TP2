@@ -5,7 +5,7 @@ popd > /dev/null
 # Option a ajustet et ajouter pour lancer un serveur a distance.
 #  -Djava.rmi.server.hostname=mycomputer.example.com \
 
-java -cp "$basepath"/dispatcher.jar:"$basepath"/shared.jar \
+java -cp "$basepath"/LDAP.jar:"$basepath"/shared.jar \
   -Djava.rmi.server.codebase=file:"$basepath"/shared.jar \
   -Djava.security.policy="$basepath"/policy \
-  ca.polymtl.inf8480.tp1.LDAP.LDAP
+  ca.polymtl.inf8480.tp2.LDAP.LDAP
