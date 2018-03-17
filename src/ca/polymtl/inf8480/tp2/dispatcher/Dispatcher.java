@@ -135,6 +135,17 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO vérification de la justesse des calculs
 		System.out.println("Received tasks to dispatch");
 		ldapStub.authenticate("phil", "bonjour");
+		String[] servers = ldapStub.listServers();
+		
+		for(int i = 0; i < servers.length ; ++i) {
+			System.out.println("Servers[" + String.valueOf(i) + "] : " + servers[i]);
+		}
+		
+		serverStubs = new ServerInterface[servers.length];
+		
+		for(int i = 0; i < servers.length ; ++i) {
+			serverStubs[i] = loadServerStub(servers[i]);
+		}
 		System.out.println("");
 		return null;
 	}
