@@ -1,0 +1,6 @@
+#!/bin/bash
+
+rm -rf ./documentation
+mkdir ./documentation
+cd documentation
+javadoc $(find ../src -name '*.java')
