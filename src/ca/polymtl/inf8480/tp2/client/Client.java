@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
+import ca.polymtl.inf8480.tp2.shared.DispatcherInterface;
 
 public class Client {
 
@@ -29,26 +30,46 @@ public class Client {
 		//TODO pouvoir lister les serveurs?
 
 		parseArgs(args);
+		Client client = new Client(dispatcherIp);
+		String [] tasks = {"Allo", "bonjour"};
+		String mode = "phil mode";
+		String user = "phil";
+		String password = "gobonjourpipicaca";
+		try {
+			client.dispatcherStub.dispatchTasks(tasks, mode, user, password);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private ServerInterface distantServerStub = null;
 	private ServerInterface localServerStub = null;
 	private ServerInterface serverStub = null;
+	private DispatcherInterface dispatcherStub = null;
 	private static final boolean USE_DISTANT_SERVER = true;
 
 
-	public Client(String distantServerHostname) {
+	public Client(String dispIp) {
 		super();
-		if( USE_DISTANT_SERVER ){
-			if (distantServerHostname != null) {
-				distantServerStub = loadServerStub(distantServerHostname);
-				System.out.println("Called loadServerStub with hostname " + distantServerHostname + "\n");
-			}
-			serverStub = distantServerStub;
-		} else {
-			localServerStub = loadServerStub("127.0.0.1");
-			serverStub = localServerStub;
+		dispatcherStub = loadDispatcherStub(dispIp);
+	}
+	
+	private DispatcherInterface loadDispatcherStub(String dispIp) {
+		DispatcherInterface stub = null;
+		try {
+			System.out.println("Loading dispatcher stub");
+			Registry reg = LocateRegistry.getRegistry(dispIp);
+			stub = (DispatcherInterface) reg.lookup("dispatcher");
+		} catch (NotBoundException e) {
+			System.out.println("Erreur: Le nom '" + e.getMessage()
+					+ "' n'est pas defini dans le registre.");
+		} catch (AccessException e) {
+			System.out.println("Erreur: " + e.getMessage());
+		} catch (RemoteException e) {
+			System.out.println("Erreur: " + e.getMessage());
 		}
+		
+		return stub;
 	}
 
 	private ServerInterface loadServerStub(String hostname) {

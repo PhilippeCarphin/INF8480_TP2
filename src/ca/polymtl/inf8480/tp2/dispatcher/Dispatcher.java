@@ -92,7 +92,7 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO appeler la classe compute callable pour créer les threads (ref : https://www.journaldev.com/1090/java-callable-future-example)
 		//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
 		//TODO vérification de la justesse des calculs
-
+		System.out.println("Received tasks to dispatch");
 		return null;
 	}
 
