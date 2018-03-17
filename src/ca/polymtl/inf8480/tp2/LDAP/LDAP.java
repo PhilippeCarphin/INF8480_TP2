@@ -56,7 +56,7 @@ public class LDAP implements LDAPInterface {
 		}
 
 		try {
-			LDAPInterface stub = (LDAPInterface) UnicastRemoteObject.exportObject(this, 5012);
+			LDAPInterface stub = (LDAPInterface) UnicastRemoteObject.exportObject(this, 5013);
 
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("LDAP", stub);
@@ -76,6 +76,7 @@ public class LDAP implements LDAPInterface {
     @Override
     public boolean authenticate(String user, String password) throws RemoteException
     {
+    		System.out.println("Authentication request received");
         if (password.equals(idMap.get(user)))
             return true;
         else

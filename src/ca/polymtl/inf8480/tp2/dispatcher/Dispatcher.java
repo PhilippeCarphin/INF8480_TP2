@@ -9,7 +9,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.rmi.AccessException;
 import java.rmi.ConnectException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -17,6 +19,7 @@ import java.rmi.server.UnicastRemoteObject;
 
 import ca.polymtl.inf8480.tp2.shared.DispatcherInterface;
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
+import ca.polymtl.inf8480.tp2.shared.LDAPInterface;
 import sun.security.ssl.Debug;
 
 import java.io.FileWriter;
@@ -43,6 +46,44 @@ public class Dispatcher implements DispatcherInterface {
 
 	public Dispatcher() {
 		super();
+		ldapStub = loadLdapStub("127.0.0.1");
+	}
+	
+	private LDAPInterface ldapStub = null;
+	private ServerInterface[] serverStubs = null;
+	
+	private LDAPInterface loadLdapStub(String ldapIp) {
+		LDAPInterface stub = null;
+		try {
+			System.out.println("Loading LDAP stub");
+			Registry reg = LocateRegistry.getRegistry(ldapIp);
+			stub = (LDAPInterface) reg.lookup("LDAP");
+		} catch (NotBoundException e) {
+			System.out.println("Erreur: Le nom '" + e.getMessage()
+					+ "' n'est pas defini dans le registre.");
+		} catch (AccessException e) {
+			System.out.println("Erreur: " + e.getMessage());
+		} catch (RemoteException e) {
+			System.out.println("Erreur: " + e.getMessage());
+		}
+		return stub;
+	}
+	
+	private ServerInterface loadServerStub(String serverIp) {
+		ServerInterface stub = null;
+		try {
+			System.out.println("Loading LDAP stub");
+			Registry reg = LocateRegistry.getRegistry(serverIp);
+			stub = (ServerInterface) reg.lookup("server");
+		} catch (NotBoundException e) {
+			System.out.println("Erreur: Le nom '" + e.getMessage()
+					+ "' n'est pas defini dans le registre.");
+		} catch (AccessException e) {
+			System.out.println("Erreur: " + e.getMessage());
+		} catch (RemoteException e) {
+			System.out.println("Erreur: " + e.getMessage());
+		}
+		return stub;
 	}
 
 	private void run() {
@@ -52,7 +93,7 @@ public class Dispatcher implements DispatcherInterface {
 
 		try {
 			DispatcherInterface stub = (DispatcherInterface) UnicastRemoteObject.exportObject(this, 5012);
-
+			
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("dispatcher", stub);
 			System.out.println("Dispatcher ready.");
@@ -93,6 +134,8 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
 		//TODO vérification de la justesse des calculs
 		System.out.println("Received tasks to dispatch");
+		ldapStub.authenticate("phil", "bonjour");
+		System.out.println("");
 		return null;
 	}
 
