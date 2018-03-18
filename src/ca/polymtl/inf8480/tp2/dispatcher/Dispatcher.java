@@ -134,20 +134,41 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
 		//TODO vérification de la justesse des calculs
 		System.out.println("Received tasks to dispatch");
-		ldapStub.authenticate("phil", "bonjour");
-		String[] servers = ldapStub.listServers();
 		
-		for(int i = 0; i < servers.length ; ++i) {
-			System.out.println("Servers[" + String.valueOf(i) + "] : " + servers[i]);
-		}
-		
-		serverStubs = new ServerInterface[servers.length];
-		
-		for(int i = 0; i < servers.length ; ++i) {
-			serverStubs[i] = loadServerStub(servers[i]);
-		}
+		getServerStubs();
+		testDispatch();
+
 		System.out.println("");
 		return null;
 	}
+	
+	public void getServerStubs() {
+		String[] servers = null;
+		try {
+			ldapStub.authenticate("phil", "bonjour");
+			servers = ldapStub.listServers();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		serverStubs = new ServerInterface[servers.length];
+		for(int i = 0; i < servers.length ; ++i) {
+			System.out.println("Servers[" + String.valueOf(i) + "] : " + servers[i]);
+			serverStubs[i] = loadServerStub(servers[i]);
+		}
+	}
 
+	
+	public void testDispatch() {
+		String[] operations = {"a", "b"};
+		for(int i = 0; i < serverStubs.length ; ++i) {
+			try {
+				serverStubs[i].compute(operations,"phil mode", "phil", "pipicaca");
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
+
+
