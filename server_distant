@@ -1,13 +1,6 @@
-pushd $(dirname $0) > /dev/null
-basepath=$(pwd)
-popd > /dev/null
+#!/bin/bash
 
-# Option a ajustet et ajouter pour lancer un serveur a distance.
-
-#  -Djava.rmi.server.hostname=mycomputer.example.com \
-
-java -cp "$basepath"/server.jar:"$basepath"/shared.jar \
-  -Djava.rmi.server.hostname=132.207.12.84 \
-  -Djava.rmi.server.codebase=file:"$basepath"/shared.jar \
-  -Djava.security.policy="$basepath"/policy \
+java -cp ./bin \
+  -Djava.rmi.server.hostname=192.168.2.25 \
+  -Djava.security.policy=./policy \
   ca.polymtl.inf8480.tp2.server.Server

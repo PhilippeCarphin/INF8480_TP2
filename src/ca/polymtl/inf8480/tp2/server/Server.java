@@ -47,7 +47,7 @@ public class Server implements ServerInterface {
 
 	public Server() {
 		super();
-		LDAPServerStub = loadLDAPStub(LDAPHostname);
+		// LDAPServerStub = loadLDAPStub(LDAPHostname);
 	}
 
 	private void run() {
