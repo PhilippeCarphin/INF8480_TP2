@@ -3,18 +3,27 @@
 ant
 
 killall rmiregistry
-sleep 1
-CLASSPATH=bin rmiregistry&
+sleep 1 # Necessary because the kill process takes a bit of time.
+CLASSPATH=bin rmiregistry& # Same as launching rmiregistry from bin
+rmipid=$!
 
 
-./LDAP &
+./LDAP & # 
+ldap_pid=$!
 sleep 2
 
 ./dispatcher &
+dispatcher_pid=$!
 ./server &
+server_pid=$!
 
-ssh pi@rpi 'cd Documents/GitHub/INF8480_TP2/ && ./prepare_distant'
+ssh pi@rpi 'cd Documents/GitHub/INF8480_TP2/ && ./prepare_distant_rpi'
 
-while true ; do
-	sleep 1
-done
+read
+
+################################################################################
+#!!!!!!!!!!!!!!!!!  NOTE: This will kill all your java processes !!!!!!!!!!!!!!
+################################################################################
+killall java
+killall rmiregistry
+
