@@ -13,6 +13,12 @@ have a server running on the local machine and one running on another machine
 
 Each machine needs to have _rmiregistry_ running.
 
+To prepare for testing, you need to have two terminal windows open.  In one
+window, call the prepare_local script.
+
+In the second, call
+	ssh pi@rpi 'cd Documents/GitHub/INF8480_TP2 ; ./prepare_distant_rpi
+
 Scripts
 -------
 
@@ -21,20 +27,15 @@ prepare_distant_rmi : Starts rmiregistry and a server on a distant machine
 prepare_local : Stars rmiregistry, starts LDAP, starts a dispatcher and starts a
 server all on the local machine.
 
-Right now, prepare_local also calls prepare_distant_rpi on the distant machine
-over ssh
-
-To keep the processes going, both scripts end with a read.  We need to press
-enter once to terminate the remote process, and once again to terminate the
-local process.
+To keep the processes going, both scripts end with a read.  They can be
+terminated by pressing ENTER.
 
 Test
 ----
 
-Once the preparation is done, the processes must keep running.  We need to open
-another terminal window and run test.sh.
+In another terminal window and run test.sh.
 
-Our first terminal window will show the output of both the remote machine and
-the local machine.
+Our local terminal will show output from LDAP, dispatcher and server.
 
+Our remote terminal will show output from Server on the remote machine.
 

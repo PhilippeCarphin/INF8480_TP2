@@ -17,7 +17,7 @@ dispatcher_pid=$!
 ./server &
 server_pid=$!
 
-ssh pi@rpi 'cd Documents/GitHub/INF8480_TP2/ && ./prepare_distant_rpi'
+# ssh pi@rpi 'cd Documents/GitHub/INF8480_TP2/ && ./prepare_distant_rpi'
 
 read
 
