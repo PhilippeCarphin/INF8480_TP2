@@ -30,7 +30,7 @@ import java.io.BufferedReader;
 public class LDAP implements LDAPInterface {
 
     static HashMap<String, String> idMap = new HashMap<String, String>();
-    static String[] servers = new String[3];
+    static String[] servers = new String[2];
 
     public static void main(String[] args)
     {
@@ -39,8 +39,7 @@ public class LDAP implements LDAPInterface {
         idMap.put("bob", "bpassword");
 
         servers[0] = "127.0.0.1";
-        servers[1] = "127.0.0.1";
-        servers[2] = "127.0.0.1";
+        servers[1] = "192.168.2.25";
 
 		LDAP ldap = new LDAP();
 		ldap.run();

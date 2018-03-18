@@ -32,7 +32,7 @@ public class Client {
 		parseArgs(args);
 		Client client = new Client(dispatcherIp);
 		String [] tasks = {"Allo", "bonjour"};
-		String mode = "phil mode";
+		String mode = "test";
 		String user = "phil";
 		String password = "gobonjourpipicaca";
 		try {
