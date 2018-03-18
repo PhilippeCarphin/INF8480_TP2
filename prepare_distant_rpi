@@ -1,0 +1,11 @@
+#!/bin/bash
+
+killall rmiregistry
+CLASSPATH=bin rmiregistry &
+
+./server_rpi &
+
+while true ; do
+	sleep 1
+done
+
