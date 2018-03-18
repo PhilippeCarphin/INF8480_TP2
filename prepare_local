@@ -1,0 +1,20 @@
+#!/bin/bash
+
+ant
+
+killall rmiregistry
+sleep 1
+CLASSPATH=bin rmiregistry&
+
+
+./LDAP &
+sleep 2
+
+./dispatcher &
+./server &
+
+ssh pi@rpi 'cd Documents/GitHub/INF8480_TP2/ && ./prepare_distant'
+
+while true ; do
+	sleep 1
+done
