@@ -35,6 +35,7 @@ public class Server implements ServerInterface {
 
 	private String LDAPHostname = "127.0.0.1";
 	private LDAPInterface LDAPServerStub = null;
+	private static Integer port = 5014; // Pas sur mais ça pourrait être utile.
 	private static int errorRate = 0;
 
 	public static void main(String[] args) {
@@ -55,7 +56,7 @@ public class Server implements ServerInterface {
 		}
 
 		try {
-			ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(this, 5014);
+			ServerInterface stub = (ServerInterface) UnicastRemoteObject.exportObject(this, port);
 
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("server", stub);
@@ -90,11 +91,16 @@ public class Server implements ServerInterface {
 	//On parse le taux d'erreurs qu'on désire au lancement du serveur de calcul
 	private static void parseArgs(String[] args)
 	{
-		if (args.length != 1)
+		if (args.length < 1) {
 			System.out.println("You need to pass an argument to determine the error rate (0 - 100).\n");
-		else
+		} else {
 			errorRate = Integer.parseInt(args[0]);
-
+			if (args.length < 2) {
+				port = 5014;
+			} else {
+				port = Integer.parseInt(args[1]);
+			}
+		}
 	}
 
 	@Override
