@@ -107,7 +107,7 @@ public class Server implements ServerInterface {
 	public int[] compute(String[] operations, String mode, String user, String password) throws RemoteException
 	{
 		System.out.println("Server received request, mode=" + mode + ", user=" + user + ", password=" + password);
-		if(mode == "Phil"){
+		if(mode.equals("test")){
 			int[] ret = {0,0,1};
 			return ret; // just testing
 		}

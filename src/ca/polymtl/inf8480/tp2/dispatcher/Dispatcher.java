@@ -163,7 +163,7 @@ public class Dispatcher implements DispatcherInterface {
 		String[] operations = {"a", "b"};
 		for(int i = 0; i < serverStubs.length ; ++i) {
 			try {
-				serverStubs[i].compute(operations,"phil mode", "phil", "pipicaca");
+				serverStubs[i].compute(operations,"test", "phil", "pipicaca");
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
