@@ -1,5 +1,3 @@
-pushd $(dirname $0) > /dev/null
-basepath=$(pwd)
-popd > /dev/null
+#!/bin/bash
 
-java -cp ./bin -Djava.security.policy=bin/policy ca.polymtl.inf8480.tp2.client.Client $*
+java -cp ./bin -Djava.security.policy=./policy ca.polymtl.inf8480.tp2.client.Client $*
