@@ -170,13 +170,19 @@ public class Dispatcher implements DispatcherInterface {
 		String[][] parts = splitOperations(tasks);
 
 		int[][] resultParts = dispatchInternal(parts);
-		
+
 		int[] results = combineResults(resultParts);
 
 		//TODO vérification de la justesse des calculs >> spot check de quelques résultats reçus par le client montre que c'est bon.
 		return results;
 	}
-	
+
+	/**
+	 * Subroutine to split list of operations into sublists.  This method will
+	 * consider the amount of resources available to each server.
+	 * @param operations
+	 * @return
+	 */
 	private String[][] splitOperations(String[] operations){
 
 		int nbParts = serverStubs.length;
@@ -189,18 +195,30 @@ public class Dispatcher implements DispatcherInterface {
 		}
 		return parts;
 	}
-	
+
+	/**
+	 * Internal details of dispatching.  This method creates threads to dispatch
+	 * the work concurrently to all servers and wait for all servers to send their
+	 * answer.
+	 * @param operationLists
+	 * @return
+	 */
 	private int[][] dispatchInternal(String[][] operationLists){
 		int nbLists = operationLists.length;
 		int resultParts[][] = new int[nbLists][];
+
 		ExecutorService executor = Executors.newFixedThreadPool(nbLists);
 		ArrayList<Future<int[]>> futures = new ArrayList<Future<int[]>>();
+
+		// Dispatch work
 		for(int i = 0; i < nbLists ; ++i) {
 			ComputeCallable cc = new ComputeCallable(serverStubs[i], operationLists[i], "unsecured", "Phil", "password1234");
 			Future<int[]> fut = executor.submit(cc);
 			futures.add(fut);
-			
+
 		}
+
+		// Wait for results
 		for(int i = 0; i < nbLists; ++i) {
 			try {
 				resultParts[i] = futures.get(i).get();
@@ -209,16 +227,22 @@ public class Dispatcher implements DispatcherInterface {
 				e.printStackTrace();
 			}
 		}
-		
+
 		executor.shutdown();
-		
+
 		return resultParts;
 	}
-	
+
+	/**
+	 * Helper method to take concatenate an array of array of int into a
+	 * single array of int to return to the client.
+	 * @param resultParts
+	 * @return
+	 */
 	private int[] combineResults(int[][] resultParts) {
 		int nbParts = resultParts.length;
 		int nbResults = 0;
-		
+
 		// Need to know how many results we have to allocate memory for
 		// our concatenated array.
 		for(int i = 0; i < nbParts ; ++i) {
