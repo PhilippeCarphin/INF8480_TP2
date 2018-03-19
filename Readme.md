@@ -1,41 +1,99 @@
-Preparation
-===========
+La première section explique comment démarrer le système pour que le client
+puisse l'utiliser.  La deuxième section montre comment utiliser le client.
 
-To run the system, we need
-* LDAP
-* Dispatcher
-* Server (maybe more than one)
-to be running.
+<H1>1. Preparation</H1>
 
-The LDAP and Dispatcher will be network objects running locally.  Also we will
-have a server running on the local machine and one running on another machine
-(and possibly more).
+Nous explicons les composantes du système et les commandes utilisées pour
+l'utiliser.  Nous recommendons de passer directement à la section 1.3 (TMUX) et
+de ne lire les sections 1.1 et 1.2 seulement si on a des problèmes à utiliser
+TMUX.
 
-Each machine needs to have _rmiregistry_ running.
+<H2>1.1 Explication</H2>
+Le système est composé d'un répartiteur (dispatcher), un service de noms LDAP et
+une série de serveurs.
 
-To prepare for testing, you need to have two terminal windows open.  In one
-window, call the prepare_local script.
+Un client peut lire un fichier contenant une liste d'opéraitons et les envoyer
+au répartiteur qui distribue les opérations aux serveurs, récupère les résultats
+et les retourne au client.
 
-In the second, call
-	ssh pi@rpi 'cd Documents/GitHub/INF8480_TP2 ; ./prepare_distant_rpi
+Le service LDAP fournit une liste de serveurs au répartiteur et une certaine
+forme d'authentification.
 
-Scripts
--------
+Tout sauf les serveurs rouleront sur la machine locale et tous les serveurs sauf
+un roulerons sur d'autres machines.
 
-prepare_distant_rmi : Starts rmiregistry and a server on a distant machine
+<H2>1.2 Commandes</H2>
 
-prepare_local : Stars rmiregistry, starts LDAP, starts a dispatcher and starts a
-server all on the local machine.
+Nous explicons ici les commandes à exécuter pour initialiser et utiliser le
+système.  Notons qu'à la fin, unt procédure avec TMUX automatise tout ce
+processus de façon bien plus simple.
 
-To keep the processes going, both scripts end with a read.  They can be
-terminated by pressing ENTER.
+Toutes les commandes doivent être exécutées dans des terminaux séparés ou toutes
+être mises en background.
 
-Test
-----
+Si les commandes sont mises en background, leurs outputs seront mélangés.  Si
+les commandes sont exécutées dans des termnaux séparés, ça devient fastidieu.
+Dans tous les cas on a beaucoup de commandes à écrire.  La solution avec TMUX
+exécute toutes les commandes et affiche leurs outputs de façon conviviale.
 
-In another terminal window and run test.sh.
+<H3>Démarrer les serveurs distant</H3>
 
-Our local terminal will show output from LDAP, dispatcher and server.
+Des scripts prepare_distant_n démarrent rmiregistry et un serveur.  Ces scripts
+doivent être exécutées sur quelques machines distantes par ssh:
 
-Our remote terminal will show output from Server on the remote machine.
+	$ ssh <machine-distante> "cd <emplacement-du-projet> ; ./prepare_distant_n"
 
+<H3>Demarrer les éléments locaux</H3>
+
+Des scripts encapsulent les commandes à exécuter pour démarrer les différentes
+parties du système.  Tout doit être exécuté dans le dossier du projet.
+
+Mais avant on doit lancer rimregistry.
+
+	$ CLASSPATH=bin rmireistry &
+
+Ensuite, on doit démarrer un serveur LDAP (c'est la première composante à lancer
+car les autre composantes cherchent le service LDAP à leur création):
+
+	$ ./LDAP
+
+Ensuite, on lance le dispatcher:
+
+	$ ./dispatcher
+
+et finalement on lance un serveur sur notre machine locale:
+
+	$ ./server
+
+<H2>1.3 Alternative avec TMUX</H2>
+
+Dans un terminal on lance TMUX:
+
+	$ tmux
+
+Une fois dans tmux, on charge le fichier launch-everything-school.tmux:
+
+	$ tmux source-file launch-everything-school.tmux
+
+La fenêtre sera séparée en plusieurs "panneaux" et toutes les commandes
+mentionnées ci-haut seront envoyées à des panneaux différents.
+
+Finalement l'usager sera placé dans un panneau dans lequel il pourra écrire des
+commandes selon le mode d'utilisation décrit dans la section suivante.
+
+Pour mettre fin à tous les programmes lancés, la commande
+
+	$ tmux kill-window
+
+arrêtera toutes les commandes lancées.
+
+<H1>2 Utilisation</H1>
+
+Pour utiliser le système, on lance le client et on lui passe, d'une part
+l'adresse ip du dipatcher (qui sera toujours 127.0.0.1) et un fichier contenant
+une liste d'opérations.
+
+	$ ./client <dispatcher-ip> <operation-file>
+
+Le script test.sh peut aussi être utilisé.  Celui ci ne fait qu'exécuter la
+commande précédente avec des arguments fixés au préalable.
