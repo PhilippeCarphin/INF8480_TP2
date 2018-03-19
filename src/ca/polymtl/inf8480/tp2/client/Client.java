@@ -25,38 +25,53 @@ public class Client {
 	private static String dispatcherIp = "127.0.0.1";
 	private static String[] operationsList;
 
+	private DispatcherInterface dispatcherStub = null;
+
+	/**
+	 * Parsing of arguments, creation of client object and delegation to
+	 * dispatcher network object.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		//TODO pouvoir lister les serveurs?
 
 		parseArgs(args);
 		Client client = new Client(dispatcherIp);
-		String [] tasks = {"Allo", "bonjour"};
-		String mode = "unsecured";
-		String user = "phil";
-		String password = "gobonjourpipicaca";
 		try {
-			int[] results = client.dispatcherStub.dispatchTasks(operationsList, mode, user, password);
-			for(int i = 0; i < results.length; ++i) {
-				System.out.println("Results[" + String.valueOf(i) + "] = " + String.valueOf(results[i]));
-			}
+			int[] results = client.dispatcherStub.dispatchTasks(operationsList, "unsecured", "phil", "pipicaca");
+			printResults(results);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
-
-	private ServerInterface distantServerStub = null;
-	private ServerInterface localServerStub = null;
-	private ServerInterface serverStub = null;
-	private DispatcherInterface dispatcherStub = null;
-	private static final boolean USE_DISTANT_SERVER = true;
-
-
+	
+	/**
+	 * Constructor.  Takes the ip of the dispatcher specified as a command
+	 * line argument.
+	 * @param dispIp
+	 */
 	public Client(String dispIp) {
 		super();
 		dispatcherStub = loadDispatcherStub(dispIp);
 	}
 	
+	/**
+	 * Print an array of integers.
+	 * @param results
+	 */
+	private static void printResults(int[] results) {
+		for(int i = 0; i < results.length; ++i) {
+			System.out.println("Results[" + String.valueOf(i) + "] = " + String.valueOf(results[i]));
+		}
+	}
+
+	/**
+	 * Get a network reference to a dispatcher object at the specified IP
+	 * address.
+	 * @param dispIp
+	 * @return
+	 */
 	private DispatcherInterface loadDispatcherStub(String dispIp) {
 		DispatcherInterface stub = null;
 		try {
@@ -71,10 +86,15 @@ public class Client {
 		} catch (RemoteException e) {
 			System.out.println("Erreur: " + e.getMessage());
 		}
-		
 		return stub;
 	}
 
+	/**
+	 * Get a network reference to a Server object at the specified IP
+	 * address.
+	 * @param hostname
+	 * @return
+	 */
 	private ServerInterface loadServerStub(String hostname) {
 		ServerInterface stub = null;
 
@@ -95,9 +115,14 @@ public class Client {
 		return stub;
 	}
 
+	/**
+	 * Parse command line arguments.  The first argument is the IP of the 
+	 * dispatcher and the second argument is a file containing a list of 
+	 * operations.
+	 * @param args
+	 */
 	private static void parseArgs(String[] args)
 	{
-		//On parse l'ip du dispatcher et le fichier d'opérations à lire
 		if (args.length == 2)
 		{
 			System.out.println("Using dispatcher ip : " + args[0]+ ".");
@@ -111,11 +136,15 @@ public class Client {
 		}
 	}
 
+	/**
+	 * Parse a file into an array of string objects.
+	 * @param fileName
+	 * @return
+	 */
 	private static String[] readOps(String fileName)
 	{
 		List<String> opList = new ArrayList<String>();
 
-		//On lit le fichier ligne par ligne pour obtenir la liste des opérations
 		try
 		{
 			FileReader fr = new FileReader(fileName);
