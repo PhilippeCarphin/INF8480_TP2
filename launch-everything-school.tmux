@@ -15,7 +15,5 @@ send-keys -t 4 'sleep 2 ; ./server' enter
 
 send-keys -t 5 'sleep 2 ; ssh l4712-02.info.polymtl.ca "cd Documents/GitHub/INF8480_TP2 ; ./prepare_distant_school_1"' enter
 
-## Just a convenience shell
+# Leave the user in pane number 1 so they may enter commands.
 select-pane -t 1
-
-attach
