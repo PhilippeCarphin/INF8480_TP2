@@ -164,6 +164,10 @@ public class Dispatcher implements DispatcherInterface {
 	@Override
 	public int[] dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException
 	{
+		//TODO calculer des sous parties de la bonne taille pour qu'elles puissent être acceptées par les serveurs de calcul
+		//TODO re-dispatcher les taches si elles ont été refusées
+		//!\ le dispatcher connais le taux de refus de chacun des serveurs
+		//TODO pour le mode non sécurisé, envoyer les même opérations à tous les serveurs puis comparer les résultats
 		System.out.println("Received tasks to dispatch");
 		getServerStubs();
 

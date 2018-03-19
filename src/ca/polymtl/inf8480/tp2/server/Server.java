@@ -131,6 +131,7 @@ public class Server implements ServerInterface {
 	{
 		System.out.println("Server received request, mode=" + mode + ", user=" + user + ", password=" + password);
 		//TODO calcul du nombre de taches et refus éventuel
+		//TODO Ajouter la vérification du taux de refus
 		if (mode.equals("secured"))
 		{
 			// Authenticate to the LDAP server, throws exceptions if anything happens
