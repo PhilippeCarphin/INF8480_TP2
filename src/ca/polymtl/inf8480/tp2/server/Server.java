@@ -108,6 +108,9 @@ public class Server implements ServerInterface {
 	{
 		System.out.println("Server received request, mode=" + mode + ", user=" + user + ", password=" + password);
 		if(mode.equals("test")){
+			for(String op : operations){
+				System.out.println(op);
+			}
 			int[] ret = {0,0,1};
 			return ret; // just testing
 		}

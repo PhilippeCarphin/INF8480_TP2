@@ -25,6 +25,7 @@ import sun.security.ssl.Debug;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import java.io.FileReader;
@@ -134,11 +135,19 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
 		//TODO vérification de la justesse des calculs
 		System.out.println("Received tasks to dispatch");
-		for(String op : tasks){
-			System.out.println(op);
-		}
 		getServerStubs();
-		testDispatch();
+		
+		int nbServers = serverStubs.length;
+		String[][] parts = new String[nbServers][];
+		int partLength = tasks.length / nbServers;
+		
+		for(int i = 0; i < nbServers ; ++i) {
+			parts[i] = Arrays.copyOfRange(tasks, i * partLength, Math.min((i+1)*partLength, tasks.length));
+		}
+		
+		for(int i = 0; i < nbServers ; ++i) {
+			serverStubs[i].compute(parts[i], "test", "phil", "pipicaca");
+		}
 
 		System.out.println("");
 		return null;
