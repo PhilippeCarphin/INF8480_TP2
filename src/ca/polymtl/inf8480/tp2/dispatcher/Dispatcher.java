@@ -36,6 +36,10 @@ public class Dispatcher implements DispatcherInterface {
 	private static String user = "";
 	private static String password = "";
 
+	/**
+	 * Parse command line arguments and run
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		//TODO ajouter comme arg le mdp, pass (et pouvoir lister les serveurs?)
@@ -45,14 +49,23 @@ public class Dispatcher implements DispatcherInterface {
 		dispatcher.run();
 	}
 
+	/**
+	 * Constructor, get a reference to the LDAP server running
+	 * on the same machine.
+	 */
 	public Dispatcher() {
 		super();
 		ldapStub = loadLdapStub("127.0.0.1");
 	}
-	
+
 	private LDAPInterface ldapStub = null;
 	private ServerInterface[] serverStubs = null;
-	
+
+	/**
+	 * Get a network reference to an LDAP at the specified IP.
+	 * @param ldapIp
+	 * @return
+	 */
 	private LDAPInterface loadLdapStub(String ldapIp) {
 		LDAPInterface stub = null;
 		try {
@@ -69,7 +82,13 @@ public class Dispatcher implements DispatcherInterface {
 		}
 		return stub;
 	}
-	
+
+	/**
+	 * Get a reference to a network server object from the specified
+	 * IP address.
+	 * @param serverIp
+	 * @return
+	 */
 	private ServerInterface loadServerStub(String serverIp) {
 		ServerInterface stub = null;
 		try {
@@ -87,6 +106,9 @@ public class Dispatcher implements DispatcherInterface {
 		return stub;
 	}
 
+	/**
+	 * Run method for this remote object.
+	 */
 	private void run() {
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
@@ -94,7 +116,7 @@ public class Dispatcher implements DispatcherInterface {
 
 		try {
 			DispatcherInterface stub = (DispatcherInterface) UnicastRemoteObject.exportObject(this, 5012);
-			
+
 			Registry registry = LocateRegistry.getRegistry();
 			registry.rebind("dispatcher", stub);
 			System.out.println("Dispatcher ready.");
@@ -107,6 +129,12 @@ public class Dispatcher implements DispatcherInterface {
 		}
 	}
 
+	/**
+	 * Parsing of arguments for dispatcher.  Either there are no arguments and
+	 * we will run in unsecured mode.
+	 * Otherwise there must be two arguments: username and password.
+	 * @param args
+	 */
 	private static void parseArgs(String[] args)
 	{
 		//On parse les arguments au répartiteur pour choisir son mode de fonctionnement
@@ -125,6 +153,11 @@ public class Dispatcher implements DispatcherInterface {
 		}
 	}
 
+	/**
+	 * Dispatch tasks among available servers.  The list of available servers
+	 * is obtained from the LDAP service.  Operations are distributed among the
+	 * available servers, the results are collected and returned to the clien.
+	 */
 	@Override
 	public int[] dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException
 	{
@@ -162,7 +195,12 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO vérification de la justesse des calculs >> spot check de quelques résultats reçus par le client montre que c'est bon.
 		return results;
 	}
-	
+
+	/**
+	 * Obtain list of network objects for the servers.  The list of server IP
+	 * addresses is obtained from LDAP and a network object is created from
+	 * each of these IPs.
+	 */
 	public void getServerStubs() {
 		String[] servers = null;
 		try {
@@ -171,7 +209,7 @@ public class Dispatcher implements DispatcherInterface {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
+
 		serverStubs = new ServerInterface[servers.length];
 		for(int i = 0; i < servers.length ; ++i) {
 			System.out.println("Servers[" + String.valueOf(i) + "] : " + servers[i]);
@@ -179,7 +217,10 @@ public class Dispatcher implements DispatcherInterface {
 		}
 	}
 
-	
+	/**
+	 * This method can be used to test interactions with LDAP and servers without
+	 * depending on arguments coming from the client.
+	 */
 	public void testDispatch() {
 		String[] operations = {"a", "b"};
 		for(int i = 0; i < serverStubs.length ; ++i) {
