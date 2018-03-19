@@ -16,6 +16,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import ca.polymtl.inf8480.tp2.shared.DispatcherInterface;
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
@@ -27,7 +30,7 @@ import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-
+import java.util.concurrent.Executors;
 import java.io.FileReader;
 import java.io.BufferedReader;
 
@@ -190,17 +193,25 @@ public class Dispatcher implements DispatcherInterface {
 	private int[][] dispatchInternal(String[][] operationLists){
 		int nbLists = operationLists.length;
 		int resultParts[][] = new int[nbLists][];
+		ExecutorService executor = Executors.newFixedThreadPool(nbLists);
+		ArrayList<Future<int[]>> futures = new ArrayList<Future<int[]>>();
 		for(int i = 0; i < nbLists ; ++i) {
-
-			//TODO appeler la classe compute callable pour créer les threads (ref : https://www.journaldev.com/1090/java-callable-future-example)
-			//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
+			ComputeCallable cc = new ComputeCallable(serverStubs[i], operationLists[i], "unsecured", "Phil", "password1234");
+			Future<int[]> fut = executor.submit(cc);
+			futures.add(fut);
+			
+		}
+		for(int i = 0; i < nbLists; ++i) {
 			try {
-				resultParts[i] = serverStubs[i].compute(operationLists[i], "unsecured", "phil", "pipicaca");
-			} catch (RemoteException e) {
+				resultParts[i] = futures.get(i).get();
+			} catch (ExecutionException | InterruptedException e) {
+				//TODO répartition des taches lors de pannes intempestives
 				e.printStackTrace();
 			}
-			//TODO répartition des taches lors de pannes intempestives
 		}
+		
+		executor.shutdown();
+		
 		return resultParts;
 	}
 	
