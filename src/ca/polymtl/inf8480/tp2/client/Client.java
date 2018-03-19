@@ -32,11 +32,14 @@ public class Client {
 		parseArgs(args);
 		Client client = new Client(dispatcherIp);
 		String [] tasks = {"Allo", "bonjour"};
-		String mode = "test";
+		String mode = "unsecured";
 		String user = "phil";
 		String password = "gobonjourpipicaca";
 		try {
-			client.dispatcherStub.dispatchTasks(operationsList, mode, user, password);
+			int[] results = client.dispatcherStub.dispatchTasks(operationsList, mode, user, password);
+			for(int i = 0; i < results.length; ++i) {
+				System.out.println("Results[" + String.valueOf(i) + "] = " + String.valueOf(results[i]));
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

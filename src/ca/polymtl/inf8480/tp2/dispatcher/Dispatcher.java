@@ -140,17 +140,25 @@ public class Dispatcher implements DispatcherInterface {
 		int nbServers = serverStubs.length;
 		String[][] parts = new String[nbServers][];
 		int partLength = tasks.length / nbServers;
+		int resultParts[][] = new int[nbServers][];
 		
 		for(int i = 0; i < nbServers ; ++i) {
 			parts[i] = Arrays.copyOfRange(tasks, i * partLength, Math.min((i+1)*partLength, tasks.length));
 		}
 		
 		for(int i = 0; i < nbServers ; ++i) {
-			serverStubs[i].compute(parts[i], "test", "phil", "pipicaca");
+			resultParts[i] = serverStubs[i].compute(parts[i], "unsecured", "phil", "pipicaca");
+		}
+		
+		int[] results = new int[tasks.length];
+		int offset = 0;
+		for(int i = 0; i < nbServers ; ++i) {
+			System.arraycopy(resultParts[i], 0, results, offset, resultParts[i].length);
+			offset += resultParts[i].length;
 		}
 
 		System.out.println("");
-		return null;
+		return results;
 	}
 	
 	public void getServerStubs() {
