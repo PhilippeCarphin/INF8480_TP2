@@ -40,7 +40,7 @@ public class Server implements ServerInterface {
 
 	/**
 	 * Parsing of arguments and call of run method
-	 * @param args
+	 * @param args Command line arguments (see parseArgs)
 	 */
 	public static void main(String[] args) {
 		parseArgs(args);
@@ -84,8 +84,8 @@ public class Server implements ServerInterface {
 	/**
 	 * Get a network reference to an LDAP object from the specified
 	 * IP address.
-	 * @param hostname
-	 * @return
+	 * @param hostname Adress of LDAP service
+	 * @return stub for LDAP service
 	 */
 	private LDAPInterface loadLDAPStub(String hostname) {
 		LDAPInterface stub = null;
@@ -110,7 +110,7 @@ public class Server implements ServerInterface {
 	 * First argument is the error rate that this server should simulate.
 	 * Second argument is a port for the server to run on.  May be useful
 	 * later.
-	 * @param args
+	 * @param args : error rate and optional port number to run on
 	 */
 	private static void parseArgs(String[] args)
 	{
@@ -152,9 +152,9 @@ public class Server implements ServerInterface {
 	 * Compute the result of a list of operations specified by strings.
 	 * The computations can be sprinkled with synthetic errors at a rate
 	 * specified by errorRate (received as an argument at server launch time).
-	 * @param operations
-	 * @param withErrors
-	 * @return
+	 * @param operations list of operations
+	 * @param withErrors specify whether to generate synthetic errors
+	 * @return array of results of operations
 	 */
 	private int[] computeInternal(String[] operations, Boolean withErrors) {
 		int[] results = new int[operations.length];
@@ -182,8 +182,8 @@ public class Server implements ServerInterface {
 	 * Compute the result of an operation specified by a string.  The first
 	 * word of the string is the name of an operation and the second word
 	 * is the argument.
-	 * @param operation
-	 * @return
+	 * @param operation A single operation
+	 * @return return value of operation
 	 */
 	private static int computeOperation(String operation)
 	{

@@ -41,7 +41,7 @@ public class Dispatcher implements DispatcherInterface {
 
 	/**
 	 * Parse command line arguments and run
-	 * @param args
+	 * @param args : command line arguments
 	 */
 	public static void main(String[] args) {
 
@@ -66,8 +66,8 @@ public class Dispatcher implements DispatcherInterface {
 
 	/**
 	 * Get a network reference to an LDAP at the specified IP.
-	 * @param ldapIp
-	 * @return
+	 * @param ldapIp Ip of LDAP server
+	 * @return stub for LDAP server
 	 */
 	private LDAPInterface loadLdapStub(String ldapIp) {
 		LDAPInterface stub = null;
@@ -89,8 +89,8 @@ public class Dispatcher implements DispatcherInterface {
 	/**
 	 * Get a reference to a network server object from the specified
 	 * IP address.
-	 * @param serverIp
-	 * @return
+	 * @param serverIp IP adress of server
+	 * @return stub for server
 	 */
 	private ServerInterface loadServerStub(String serverIp) {
 		ServerInterface stub = null;
@@ -136,7 +136,7 @@ public class Dispatcher implements DispatcherInterface {
 	 * Parsing of arguments for dispatcher.  Either there are no arguments and
 	 * we will run in unsecured mode.
 	 * Otherwise there must be two arguments: username and password.
-	 * @param args
+	 * @param args Command line arguments
 	 */
 	private static void parseArgs(String[] args)
 	{
@@ -180,8 +180,8 @@ public class Dispatcher implements DispatcherInterface {
 	/**
 	 * Subroutine to split list of operations into sublists.  This method will
 	 * consider the amount of resources available to each server.
-	 * @param operations
-	 * @return
+	 * @param operations Operations to run
+	 * @return results of operations
 	 */
 	private String[][] splitOperations(String[] operations){
 
@@ -200,8 +200,8 @@ public class Dispatcher implements DispatcherInterface {
 	 * Internal details of dispatching.  This method creates threads to dispatch
 	 * the work concurrently to all servers and wait for all servers to send their
 	 * answer.
-	 * @param operationLists
-	 * @return
+	 * @param operationLists Lists of operations to send to individual servers
+	 * @return arrays of results from individual servers
 	 */
 	private int[][] dispatchInternal(String[][] operationLists){
 		int nbLists = operationLists.length;
@@ -236,8 +236,8 @@ public class Dispatcher implements DispatcherInterface {
 	/**
 	 * Helper method to take concatenate an array of array of int into a
 	 * single array of int to return to the client.
-	 * @param resultParts
-	 * @return
+	 * @param resultParts array of array of ints
+	 * @return concatenation of arrays
 	 */
 	private int[] combineResults(int[][] resultParts) {
 		int nbParts = resultParts.length;

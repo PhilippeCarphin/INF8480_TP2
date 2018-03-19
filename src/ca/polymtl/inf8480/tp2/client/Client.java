@@ -30,7 +30,7 @@ public class Client {
 	/**
 	 * Parsing of arguments, creation of client object and delegation to
 	 * dispatcher network object.
-	 * @param args
+	 * @param args dispatcher ip and file containing list of operations
 	 */
 	public static void main(String[] args) {
 
@@ -49,7 +49,7 @@ public class Client {
 	/**
 	 * Constructor.  Takes the ip of the dispatcher specified as a command
 	 * line argument.
-	 * @param dispIp
+	 * @param dispIp IP of dispatcher
 	 */
 	public Client(String dispIp) {
 		super();
@@ -58,7 +58,7 @@ public class Client {
 	
 	/**
 	 * Print an array of integers.
-	 * @param results
+	 * @param results array to print
 	 */
 	private static void printResults(int[] results) {
 		for(int i = 0; i < results.length; ++i) {
@@ -69,8 +69,8 @@ public class Client {
 	/**
 	 * Get a network reference to a dispatcher object at the specified IP
 	 * address.
-	 * @param dispIp
-	 * @return
+	 * @param dispIp Ip of dispatcher
+	 * @return stub for dispatcher
 	 */
 	private DispatcherInterface loadDispatcherStub(String dispIp) {
 		DispatcherInterface stub = null;
@@ -92,8 +92,8 @@ public class Client {
 	/**
 	 * Get a network reference to a Server object at the specified IP
 	 * address.
-	 * @param hostname
-	 * @return
+	 * @param hostname IP of server
+	 * @return stub for server
 	 */
 	private ServerInterface loadServerStub(String hostname) {
 		ServerInterface stub = null;
@@ -119,7 +119,7 @@ public class Client {
 	 * Parse command line arguments.  The first argument is the IP of the 
 	 * dispatcher and the second argument is a file containing a list of 
 	 * operations.
-	 * @param args
+	 * @param args command line arguments
 	 */
 	private static void parseArgs(String[] args)
 	{
@@ -138,8 +138,8 @@ public class Client {
 
 	/**
 	 * Parse a file into an array of string objects.
-	 * @param fileName
-	 * @return
+	 * @param fileName file containing operations (one operation per line)
+	 * @return Array of strings (one string per line of the file)
 	 */
 	private static String[] readOps(String fileName)
 	{
