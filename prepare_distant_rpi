@@ -1,6 +1,10 @@
 #!/bin/bash
+git fetch
+git reset --hard origin/master
+ant
 
 killall rmiregistry
+sleep 1
 CLASSPATH=bin rmiregistry &
 
 ./server_rpi &
