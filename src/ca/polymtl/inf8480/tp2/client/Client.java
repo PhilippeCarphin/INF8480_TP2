@@ -36,7 +36,7 @@ public class Client {
 		String user = "phil";
 		String password = "gobonjourpipicaca";
 		try {
-			client.dispatcherStub.dispatchTasks(tasks, mode, user, password);
+			client.dispatcherStub.dispatchTasks(operationsList, mode, user, password);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

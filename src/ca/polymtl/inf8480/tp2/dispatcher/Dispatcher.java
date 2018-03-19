@@ -134,7 +134,9 @@ public class Dispatcher implements DispatcherInterface {
 		//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
 		//TODO vérification de la justesse des calculs
 		System.out.println("Received tasks to dispatch");
-		
+		for(String op : tasks){
+			System.out.println(op);
+		}
 		getServerStubs();
 		testDispatch();
 
