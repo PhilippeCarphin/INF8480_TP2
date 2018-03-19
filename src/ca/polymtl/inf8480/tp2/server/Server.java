@@ -157,7 +157,7 @@ public class Server implements ServerInterface {
 	 * @param withErrors specify whether to generate synthetic errors
 	 * @return array of results of operations
 	 */
-	private int[] computeInternal(String[] operations, Boolean withErrors) {
+	private int[] computeInternal(String[] operations, Boolean malicious) {
 		int[] results = new int[operations.length];
 		for (int i = 0; i < operations.length ; i++)
 		{
@@ -165,7 +165,7 @@ public class Server implements ServerInterface {
 			// de calcul identique qu'il y ait des erreurs ou non
 			results[i] = computeOperation(operations[i]);
 			
-			if(withErrors) {
+			if(malicious) {
 				Random rand = new Random();
 				int  n = rand.nextInt(100) + 1;
 	
