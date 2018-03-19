@@ -133,7 +133,7 @@ public class Server implements ServerInterface {
 		//TODO calcul du nombre de taches et refus éventuel
 		if (mode.equals("secured"))
 		{
-			//Authenticate to the LDAP server, throws exceptions if anything happens
+			// Authenticate to the LDAP server, throws exceptions if anything happens
 			try {
 				if (!LDAPServerStub.authenticate(user, password)) {
 					System.out.println("Could not authenticate user");

@@ -38,6 +38,7 @@ public class LDAP implements LDAPInterface {
         idMap.put("alice", "apassword");
         idMap.put("bob", "bpassword");
 
+        // Le script qui demarre LDAP à l'école envoit un argument bidon de plus.
         servers[0] = "127.0.0.1";
 		if( args.length < 1 ){
 			servers[1] = "l4712-02.info.polymtl.ca";
@@ -79,7 +80,7 @@ public class LDAP implements LDAPInterface {
     @Override
     public boolean authenticate(String user, String password) throws RemoteException
     {
-    		System.out.println("Authentication request received");
+    		System.out.println("LDAP : Authenticating user=" + user + ", password=" + password);
         if (password.equals(idMap.get(user)))
             return true;
         else
@@ -90,6 +91,7 @@ public class LDAP implements LDAPInterface {
     @Override
     public String[] listServers() throws RemoteException
     {
+    		System.out.println("LDAP : listServers request received");
         return servers;
     }
 
