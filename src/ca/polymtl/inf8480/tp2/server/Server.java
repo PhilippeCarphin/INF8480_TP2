@@ -38,6 +38,10 @@ public class Server implements ServerInterface {
 	private static Integer port = 5014; // Pas sur mais ça pourrait être utile.
 	private static int errorRate = 0;
 
+	/**
+	 * Parsing of arguments and call of run method
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		parseArgs(args);
 
@@ -45,11 +49,18 @@ public class Server implements ServerInterface {
 		server.run();
 	}
 
+	/**
+	 * Constructor.  For testing purposes, the server doesn't use LDAP because
+	 * the external servers can't connect to my computer.
+	 */
 	public Server() {
 		super();
 		// LDAPServerStub = loadLDAPStub(LDAPHostname);
 	}
 
+	/**
+	 * Run method of remote object.
+	 */
 	private void run() {
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new SecurityManager());
@@ -70,6 +81,12 @@ public class Server implements ServerInterface {
 		}
 	}
 
+	/**
+	 * Get a network reference to an LDAP object from the specified
+	 * IP address.
+	 * @param hostname
+	 * @return
+	 */
 	private LDAPInterface loadLDAPStub(String hostname) {
 		LDAPInterface stub = null;
 
@@ -88,7 +105,13 @@ public class Server implements ServerInterface {
 		return stub;
 	}
 
-	//On parse le taux d'erreurs qu'on désire au lancement du serveur de calcul
+	/**
+	 * Parsing of arguments.
+	 * First argument is the error rate that this server should simulate.
+	 * Second argument is a port for the server to run on.  May be useful
+	 * later.
+	 * @param args
+	 */
 	private static void parseArgs(String[] args)
 	{
 		if (args.length < 1) {
@@ -107,60 +130,44 @@ public class Server implements ServerInterface {
 	public int[] compute(String[] operations, String mode, String user, String password) throws RemoteException
 	{
 		System.out.println("Server received request, mode=" + mode + ", user=" + user + ", password=" + password);
-		if(mode.equals("test")){
-			for(String op : operations){
-				System.out.println(op);
-			}
-			int[] ret = {0,0,1};
-			return ret; // just testing
-		}
-		int opNum = operations.length;
-		int[] results = new int[opNum];
-
 		//TODO calcul du nombre de taches et refus éventuel
-
 		if (mode.equals("secured"))
 		{
 			//Authenticate to the LDAP server, throws exceptions if anything happens
-			try
-			{
-				if (!LDAPServerStub.authenticate(user, password))
+			try {
+				if (!LDAPServerStub.authenticate(user, password)) {
+					System.out.println("Could not authenticate user");
 					return null;
-			}
-			catch (RemoteException e)
-			{
+				}
+			} catch (RemoteException e) {
 				throw new RemoteException();
 			}
-
-			for (int i = 0; i < opNum; i++)
-			{
-				if (operations[i].split(" ")[0].equals("prime"))
-				{
-					results[i] = Operations.prime(Integer.parseInt(operations[i].split(" ")[1]));
-				}
-				else
-				{
-					results[i] = Operations.pell(Integer.parseInt(operations[i].split(" ")[1]));
-				}
-			}
+			return computeInternal(operations, false);
+		} else {
+			return computeInternal(operations, true);
 		}
-		else
-		{
-			//On calcule quand même la valeur pour avoir un temps de calcul identique qu'il y ait des erreurs ou non
-			for (int i = 0; i < opNum; i++)
-			{
-				if (operations[i].split(" ")[0].equals("prime"))
-				{
-					results[i] = Operations.prime(Integer.parseInt(operations[i].split(" ")[1]));
-				}
-				else
-				{
-					results[i] = Operations.pell(Integer.parseInt(operations[i].split(" ")[1]));
-				}
+	}
 
+	/**
+	 * Compute the result of a list of operations specified by strings.
+	 * The computations can be sprinkled with synthetic errors at a rate
+	 * specified by errorRate (received as an argument at server launch time).
+	 * @param operations
+	 * @param withErrors
+	 * @return
+	 */
+	private int[] computeInternal(String[] operations, Boolean withErrors) {
+		int[] results = new int[operations.length];
+		for (int i = 0; i < operations.length ; i++)
+		{
+			// On calcule quand même la valeur pour avoir un temps
+			// de calcul identique qu'il y ait des erreurs ou non
+			results[i] = computeOperation(operations[i]);
+			
+			if(withErrors) {
 				Random rand = new Random();
 				int  n = rand.nextInt(100) + 1;
-
+	
 				if (n <= errorRate)
 				{
 					rand = new Random();
@@ -168,8 +175,26 @@ public class Server implements ServerInterface {
 				}
 			}
 		}
-
 		return results;
+	}
+
+	/**
+	 * Compute the result of an operation specified by a string.  The first
+	 * word of the string is the name of an operation and the second word
+	 * is the argument.
+	 * @param operation
+	 * @return
+	 */
+	private static int computeOperation(String operation)
+	{
+		String[] words = operation.split(" ");
+		String opName = words[0];
+		Integer arg = Integer.parseInt(words[1]);
+		if (opName.equals("prime")) {
+			return Operations.prime(arg);
+		} else {
+			return Operations.pell(arg);
+		}
 	}
 
 }
