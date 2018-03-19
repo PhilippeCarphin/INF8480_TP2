@@ -1,0 +1,9 @@
+TODOS:
+
+Add parameter to server Server.main() to set it's Q-value
+Make two tmux scripts to do the experiments
+
+Add parameter to Server.main() to tell the LDAP address
+so that the server can use it to authenticate.
+
+Ajouter une variable d'environnement pour dire l'emplacement du code.
