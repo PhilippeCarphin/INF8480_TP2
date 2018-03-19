@@ -161,38 +161,67 @@ public class Dispatcher implements DispatcherInterface {
 	@Override
 	public int[] dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException
 	{
-
 		System.out.println("Received tasks to dispatch");
 		getServerStubs();
 
-		int nbServers = serverStubs.length;
-		String[][] parts = new String[nbServers][];
-		int partLength = tasks.length / nbServers;
-		int resultParts[][] = new int[nbServers][];
+		String[][] parts = splitOperations(tasks);
 
+		int[][] resultParts = dispatchInternal(parts);
+		
+		int[] results = combineResults(resultParts);
+
+		//TODO vérification de la justesse des calculs >> spot check de quelques résultats reçus par le client montre que c'est bon.
+		return results;
+	}
+	
+	private String[][] splitOperations(String[] operations){
+
+		int nbParts = serverStubs.length;
 		//TODO calculer la charge des serveurs
-
 		//TODO répartition des taches selon la charge
-		for(int i = 0; i < nbServers ; ++i) {
-			parts[i] = Arrays.copyOfRange(tasks, i * partLength, Math.min((i+1)*partLength, tasks.length));
+		int partLength = operations.length / nbParts;
+		String[][] parts = new String[serverStubs.length][];
+		for(int i = 0; i < nbParts ; ++i) {
+			parts[i] = Arrays.copyOfRange(operations, i * partLength, Math.min((i+1)*partLength, operations.length));
 		}
-		for(int i = 0; i < nbServers ; ++i) {
+		return parts;
+	}
+	
+	private int[][] dispatchInternal(String[][] operationLists){
+		int nbLists = operationLists.length;
+		int resultParts[][] = new int[nbLists][];
+		for(int i = 0; i < nbLists ; ++i) {
 
 			//TODO appeler la classe compute callable pour créer les threads (ref : https://www.journaldev.com/1090/java-callable-future-example)
 			//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
-			resultParts[i] = serverStubs[i].compute(parts[i], "unsecured", "phil", "pipicaca");
+			try {
+				resultParts[i] = serverStubs[i].compute(operationLists[i], "unsecured", "phil", "pipicaca");
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 			//TODO répartition des taches lors de pannes intempestives
 		}
+		return resultParts;
+	}
+	
+	private int[] combineResults(int[][] resultParts) {
+		int nbParts = resultParts.length;
+		int nbResults = 0;
+		
+		// Need to know how many results we have to allocate memory for
+		// our concatenated array.
+		for(int i = 0; i < nbParts ; ++i) {
+			nbResults += resultParts[i].length;
+		}
 
-		int[] results = new int[tasks.length];
+		int[] results = new int[nbResults];
 		int offset = 0;
-		for(int i = 0; i < nbServers ; ++i) {
+		for(int i = 0; i < nbParts ; ++i) {
+			nbResults += resultParts[i].length;
 			System.arraycopy(resultParts[i], 0, results, offset, resultParts[i].length);
 			offset += resultParts[i].length;
 		}
 
-		System.out.println("");
-		//TODO vérification de la justesse des calculs >> spot check de quelques résultats reçus par le client montre que c'est bon.
 		return results;
 	}
 
@@ -204,7 +233,6 @@ public class Dispatcher implements DispatcherInterface {
 	public void getServerStubs() {
 		String[] servers = null;
 		try {
-			ldapStub.authenticate("phil", "bonjour");
 			servers = ldapStub.listServers();
 		} catch (RemoteException e) {
 			e.printStackTrace();
