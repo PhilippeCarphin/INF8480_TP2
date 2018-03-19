@@ -128,28 +128,29 @@ public class Dispatcher implements DispatcherInterface {
 	@Override
 	public int[] dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException
 	{
-		//TODO répartition des taches
-		//TODO répartition des taches lors de pannes intempestives
-		//TODO calculer la charge des serveurs
-		//TODO appeler la classe compute callable pour créer les threads (ref : https://www.journaldev.com/1090/java-callable-future-example)
-		//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
-		//TODO vérification de la justesse des calculs
+
 		System.out.println("Received tasks to dispatch");
 		getServerStubs();
-		
+
 		int nbServers = serverStubs.length;
 		String[][] parts = new String[nbServers][];
 		int partLength = tasks.length / nbServers;
 		int resultParts[][] = new int[nbServers][];
-		
+
+		//TODO calculer la charge des serveurs
+
+		//TODO répartition des taches selon la charge
 		for(int i = 0; i < nbServers ; ++i) {
 			parts[i] = Arrays.copyOfRange(tasks, i * partLength, Math.min((i+1)*partLength, tasks.length));
 		}
-		
 		for(int i = 0; i < nbServers ; ++i) {
+
+			//TODO appeler la classe compute callable pour créer les threads (ref : https://www.journaldev.com/1090/java-callable-future-example)
+			//TODO créer un pool de thread de la taille du nombre de serveurs disponibles
 			resultParts[i] = serverStubs[i].compute(parts[i], "unsecured", "phil", "pipicaca");
+			//TODO répartition des taches lors de pannes intempestives
 		}
-		
+
 		int[] results = new int[tasks.length];
 		int offset = 0;
 		for(int i = 0; i < nbServers ; ++i) {
@@ -158,6 +159,7 @@ public class Dispatcher implements DispatcherInterface {
 		}
 
 		System.out.println("");
+		//TODO vérification de la justesse des calculs >> spot check de quelques résultats reçus par le client montre que c'est bon.
 		return results;
 	}
 	
