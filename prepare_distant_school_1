@@ -1,0 +1,13 @@
+#!/bin/bash
+
+killall rmiregistry
+sleep 1
+CLASSPATH=bin rmiregistry &
+
+./server_school_1 &
+
+read
+
+killall java
+killall rmiregistry
+

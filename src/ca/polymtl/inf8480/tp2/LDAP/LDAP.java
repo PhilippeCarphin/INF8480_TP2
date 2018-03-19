@@ -39,7 +39,7 @@ public class LDAP implements LDAPInterface {
         idMap.put("bob", "bpassword");
 
         servers[0] = "127.0.0.1";
-        servers[1] = "192.168.2.25";
+		servers[1] = "l4712-02.info.polymtl.ca";
 
 		LDAP ldap = new LDAP();
 		ldap.run();

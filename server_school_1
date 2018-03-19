@@ -1,0 +1,6 @@
+#!/bin/bash
+
+java -cp ./bin \
+  -Djava.rmi.server.hostname=l4712-02.info.polymtl.ca \
+  -Djava.security.policy=./policy \
+  ca.polymtl.inf8480.tp2.server.Server
