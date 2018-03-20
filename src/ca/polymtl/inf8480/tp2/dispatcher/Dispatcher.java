@@ -23,6 +23,8 @@ import java.util.concurrent.Future;
 import ca.polymtl.inf8480.tp2.shared.DispatcherInterface;
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 import ca.polymtl.inf8480.tp2.shared.LDAPInterface;
+import ca.polymtl.inf8480.tp2.shared.Response;
+import ca.polymtl.inf8480.tp2.shared.AuthenticationException;
 import sun.security.ssl.Debug;
 
 import java.io.FileWriter;
@@ -162,8 +164,9 @@ public class Dispatcher implements DispatcherInterface {
 	 * available servers, the results are collected and returned to the clien.
 	 */
 	@Override
-	public int[] dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException
+	public Response dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException
 	{
+		Response resp = new Response();
 		//TODO calculer des sous parties de la bonne taille pour qu'elles puissent être acceptées par les serveurs de calcul
 		//TODO re-dispatcher les taches si elles ont été refusées
 		//!\ le dispatcher connais le taux de refus de chacun des serveurs
@@ -175,13 +178,19 @@ public class Dispatcher implements DispatcherInterface {
 
 		int[][] resultParts = null;
 		if(mode.equals("secured")) {
-			resultParts = dispatchInternalSecured(parts, user, password);
+			try {
+				resultParts = dispatchInternalSecured(parts, user, password);
+			} catch (AuthenticationException e) {
+				resp.code = Response.Code.AUTH_FAILURE;
+				return resp;
+			}
 		}
 
 		int[] results = combineResults(resultParts);
 
 		//TODO vérification de la justesse des calculs >> spot check de quelques résultats reçus par le client montre que c'est bon.
-		return results;
+		resp.results = results;
+		return resp;
 	}
 
 	/**
@@ -210,7 +219,7 @@ public class Dispatcher implements DispatcherInterface {
 	 * @param operationLists Lists of operations to send to individual servers
 	 * @return arrays of results from individual servers
 	 */
-	private int[][] dispatchInternalSecured(String[][] operationLists, String user, String password){
+	private int[][] dispatchInternalSecured(String[][] operationLists, String user, String password) throws AuthenticationException {
 		
 		// Based on server capacities, split into a number of parts
 		// equal to the number of servers.
@@ -222,12 +231,12 @@ public class Dispatcher implements DispatcherInterface {
 		int resultParts[][] = new int[nbLists][];
 
 		ExecutorService executor = Executors.newFixedThreadPool(nbLists);
-		ArrayList<Future<int[]>> futures = new ArrayList<Future<int[]>>();
+		ArrayList<Future<Response>> futures = new ArrayList<Future<Response>>();
 
 		// Dispatch work
 		for(int i = 0; i < nbLists ; ++i) {
 			ComputeCallable cc = new ComputeCallable(serverStubs[i], operationLists[i], "secured", user, password);
-			Future<int[]> fut = executor.submit(cc);
+			Future<Response> fut = executor.submit(cc);
 			futures.add(fut);
 
 		}
@@ -235,7 +244,11 @@ public class Dispatcher implements DispatcherInterface {
 		// Wait for results
 		for(int i = 0; i < nbLists; ++i) {
 			try {
-				resultParts[i] = futures.get(i).get();
+				Response subResp = futures.get(i).get();
+				if(subResp.code == Response.Code.AUTH_FAILURE) {
+					throw new AuthenticationException("Authentication failed with some server");
+				}
+				resultParts[i] = subResp.results;
 			} catch (ExecutionException | InterruptedException e) {
 				//TODO répartition des taches lors de pannes intempestives
 				e.printStackTrace();
@@ -243,7 +256,6 @@ public class Dispatcher implements DispatcherInterface {
 		}
 
 		executor.shutdown();
-
 		return resultParts;
 	}
 	

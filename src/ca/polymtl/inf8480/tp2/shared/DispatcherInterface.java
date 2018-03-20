@@ -5,5 +5,5 @@ import java.rmi.RemoteException;
 
 
 public interface DispatcherInterface extends Remote {
-    int[] dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException;
+    Response dispatchTasks(String[] tasks, String mode, String user, String password) throws RemoteException;
 }

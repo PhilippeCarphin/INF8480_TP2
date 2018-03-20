@@ -155,7 +155,7 @@ public class Server implements ServerInterface {
 			try {
 				if (!LDAPServerStub.authenticate(user, password)) {
 					System.out.println("Could not authenticate user");
-					return null;
+					resp.code = Response.Code.AUTH_FAILURE;
 				}
 			} catch (RemoteException e) {
 				throw new RemoteException();

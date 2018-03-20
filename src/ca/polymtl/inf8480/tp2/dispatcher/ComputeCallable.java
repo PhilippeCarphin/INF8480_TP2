@@ -1,5 +1,7 @@
 package ca.polymtl.inf8480.tp2.dispatcher;
 
+import ca.polymtl.inf8480.tp2.shared.AuthenticationException;
+
 import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -11,7 +13,7 @@ import java.util.concurrent.Future;
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 import ca.polymtl.inf8480.tp2.shared.Response;
 
-public class ComputeCallable implements Callable<int[]>
+public class ComputeCallable implements Callable<Response>
 {
     private String[] operations;
     private String mode;
@@ -29,8 +31,9 @@ public class ComputeCallable implements Callable<int[]>
     }
 
     @Override
-    public int[] call() throws Exception
+    public Response call() throws Exception, AuthenticationException
     {
+    		Response resp = new Response();
     		// Responsible for taking operations, and sending chunks of it to 
     		// to the server
     		// int[][] resultChunks = ???
@@ -52,16 +55,15 @@ public class ComputeCallable implements Callable<int[]>
         {
         		int[] results = null;
         		for(int i = 0; i < chunks.length ; ++i) {
-        			Response resp = serverStub.compute(chunks[i], mode, user, password);
-        			if (resp.code == Response.Code.NO_ERROR) {
-            			resultChunks[i] = resp.results;
-        			} else if (resp.code == Response.Code.AUTH_FAILURE) {
-        				throw new Exception("Authentication failure");
+        			Response subResp = serverStub.compute(chunks[i], mode, user, "pissbucket");
+        			if (subResp.code == Response.Code.NO_ERROR) {
+            			resultChunks[i] = subResp.results;
+        			} else if (subResp.code == Response.Code.AUTH_FAILURE) {
+        				return subResp;
         			}
             }
-        		results = combineResults(resultChunks);
-
-        		return results;
+        		resp.results = combineResults(resultChunks);
+        		return resp;
         }
         catch (RemoteException e)
         {

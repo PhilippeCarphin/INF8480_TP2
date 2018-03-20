@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 import ca.polymtl.inf8480.tp2.shared.DispatcherInterface;
+import ca.polymtl.inf8480.tp2.shared.Response;
 
 public class Client {
 
@@ -39,8 +40,12 @@ public class Client {
 		parseArgs(args);
 		Client client = new Client(dispatcherIp);
 		try {
-			int[] results = client.dispatcherStub.dispatchTasks(operationsList, "secured", "alice", "apassword");
-			printResults(results);
+			Response resp = client.dispatcherStub.dispatchTasks(operationsList, "secured", "alice", "apassword");
+			if(resp.code == Response.Code.AUTH_FAILURE) {
+				System.out.println("Encountered AUTH_FAILURE during operation");
+			} else {
+				printResults(resp.results);
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
