@@ -39,7 +39,7 @@ public class Client {
 		parseArgs(args);
 		Client client = new Client(dispatcherIp);
 		try {
-			int[] results = client.dispatcherStub.dispatchTasks(operationsList, "unsecured", "phil", "pipicaca");
+			int[] results = client.dispatcherStub.dispatchTasks(operationsList, "secured", "phil", "pipicaca");
 			printResults(results);
 		} catch (RemoteException e) {
 			e.printStackTrace();

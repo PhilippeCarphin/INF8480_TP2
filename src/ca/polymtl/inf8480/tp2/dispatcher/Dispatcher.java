@@ -173,7 +173,10 @@ public class Dispatcher implements DispatcherInterface {
 
 		String[][] parts = splitOperations(tasks);
 
-		int[][] resultParts = dispatchInternal(parts);
+		int[][] resultParts = null;
+		if(mode.equals("secured")) {
+			resultParts = dispatchInternalSecured(parts, user, password);
+		}
 
 		int[] results = combineResults(resultParts);
 
@@ -199,10 +202,6 @@ public class Dispatcher implements DispatcherInterface {
 		}
 		return parts;
 	}
-	
-	private int[][] dispatchInternal(String[][] operationLists){
-		return dispatchInternalSecured(operationLists);
-	}
 
 	/**
 	 * Internal details of dispatching.  This method creates threads to dispatch
@@ -211,7 +210,7 @@ public class Dispatcher implements DispatcherInterface {
 	 * @param operationLists Lists of operations to send to individual servers
 	 * @return arrays of results from individual servers
 	 */
-	private int[][] dispatchInternalSecured(String[][] operationLists){
+	private int[][] dispatchInternalSecured(String[][] operationLists, String user, String password){
 		
 		// Based on server capacities, split into a number of parts
 		// equal to the number of servers.
@@ -227,7 +226,7 @@ public class Dispatcher implements DispatcherInterface {
 
 		// Dispatch work
 		for(int i = 0; i < nbLists ; ++i) {
-			ComputeCallable cc = new ComputeCallable(serverStubs[i], operationLists[i], "unsecured", "Phil", "password1234");
+			ComputeCallable cc = new ComputeCallable(serverStubs[i], operationLists[i], "secured", "Phil", "password1234");
 			Future<int[]> fut = executor.submit(cc);
 			futures.add(fut);
 
