@@ -1,0 +1,15 @@
+#!/bin/bash
+
+hostname=$1
+ldap=$2
+error_rate=$3
+capacity=$4
+
+killall rmiregistry
+sleep 1
+CLASSPATH=bin rmiregistry &
+
+java -cp ./bin \
+  -Djava.rmi.server.hostname=$hostname \
+  -Djava.security.policy=./policy \
+  ca.polymtl.inf8480.tp2.server.Server $error_rate $capacity $ldap
