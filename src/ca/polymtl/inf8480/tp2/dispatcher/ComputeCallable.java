@@ -51,7 +51,7 @@ public class ComputeCallable implements Callable<int[]>
         {
         		int[] results = null;
         		for(int i = 0; i < chunks.length ; ++i) {
-        			resultChunks[i] = serverStub.compute(chunks[i], mode, user, password);
+        			resultChunks[i] = serverStub.compute(chunks[i], mode, user, password).results;
             }
         		results = combineResults(resultChunks);
 

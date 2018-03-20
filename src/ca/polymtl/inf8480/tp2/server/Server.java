@@ -20,6 +20,7 @@ import java.util.Random;
 
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
 import ca.polymtl.inf8480.tp2.shared.LDAPInterface;
+import ca.polymtl.inf8480.tp2.shared.Response;
 import ca.polymtl.inf8480.tp2.server.Operations;
 import sun.security.ssl.Debug;
 
@@ -137,8 +138,9 @@ public class Server implements ServerInterface {
 	}
 
 	@Override
-	public int[] compute(String[] operations, String mode, String user, String password) throws RemoteException
+	public Response compute(String[] operations, String mode, String user, String password) throws RemoteException
 	{
+		Response resp = new Response();
 		System.out.println("Server received request, mode=" + mode + ", user=" + user + ", password=" + password);
 		System.out.println("Number of operation = " + String.valueOf(operations.length));
 		if(refuseWork(operations.length)) {
@@ -158,10 +160,11 @@ public class Server implements ServerInterface {
 			} catch (RemoteException e) {
 				throw new RemoteException();
 			}
-			return computeInternal(operations, false);
+			resp.results = computeInternal(operations, false);
 		} else {
-			return computeInternal(operations, true);
+			resp.results = computeInternal(operations, true);
 		}
+		return resp;
 	}
 	
 	@Override
