@@ -1,0 +1,22 @@
+#bin/bash
+
+hostname=$1
+ldap=$2
+error_rate=$3
+capacity=$4
+
+
+if [[ "$5" == "" ]] ; then
+	user=$USER
+else
+	user=$5
+fi
+
+if [[ "$CODE_LOCATION" == "" ]] ; then
+	CODE_LOCATION="~/Documents/GitHub/INF8480_TP2"
+fi
+
+echo "error_rate = $error_rate"
+
+
+ssh $user@$hostname "cd $CODE_LOCATION ; ./remote_server $hostname $ldap $error_rate $capacity"

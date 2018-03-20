@@ -13,7 +13,8 @@ send-keys -t 3 'sleep 2 ; ./dispatcher' enter
 
 send-keys -t 4 'sleep 2 ; ./server' enter
 
-send-keys -t 5 'sleep 2 ; ssh l4712-02.info.polymtl.ca "cd $CODE_LOCATION ; ./prepare_distant_school_1"' enter
+send-keys -t 5 'sleep 2 ; ./start-remote-server l4712-11.info.polymtl.ca l4712-10.info.polymtl.ca 0 8 phcarb' enter
+send-keys -t 6 'sleep 2 ; ./start-remote-server l4712-12.info.polymtl.ca l4712-10.info.polymtl.ca 0 8 phcarb' enter
 
 # Leave the user in pane number 1 so they may enter commands.
 select-pane -t 1

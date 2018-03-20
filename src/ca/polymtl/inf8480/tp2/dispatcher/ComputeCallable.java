@@ -39,7 +39,7 @@ public class ComputeCallable implements Callable<Response>
     		if(mode.equals("secured")) {
     			return callSecured();
     		} else {
-    			return callSecured(); // Change this of course
+    			return callUnsecured(); // Change this of course
     		}
     }
     

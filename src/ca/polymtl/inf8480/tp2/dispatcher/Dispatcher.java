@@ -174,22 +174,27 @@ public class Dispatcher implements DispatcherInterface {
 		System.out.println("Received tasks to dispatch");
 		getServerStubs();
 
-		String[][] parts = splitOperations(tasks);
-
-		int[][] resultParts = null;
 		if(mode.equals("secured")) {
+			String[][] parts = splitOperations(tasks);
+			int[][] resultParts = null;
 			try {
 				resultParts = dispatchInternalSecured(parts, user, password);
 			} catch (AuthenticationException e) {
 				resp.code = Response.Code.AUTH_FAILURE;
 				return resp;
 			}
+			int[] results = combineResults(resultParts);
+			resp.results = results;
+		} else {
+			int[] results = null;
+			try {
+				results = dispatchInternalUnsecured(tasks);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			resp.results = results;
 		}
 
-		int[] results = combineResults(resultParts);
-
-		//TODO vérification de la justesse des calculs >> spot check de quelques résultats reçus par le client montre que c'est bon.
-		resp.results = results;
 		return resp;
 	}
 
@@ -259,34 +264,70 @@ public class Dispatcher implements DispatcherInterface {
 		return resultParts;
 	}
 	
-	private int[] dispatchInternalUnsecured(String[] operations) {
+	private int[] dispatchInternalUnsecured(String[] operations) throws RemoteException {
 		// Splitter en bouché de serveurs
-		String [][] smallChunks = splitIntoSmallChunks(operations);
-		int[][] smallResults = new int[smallChunks.length][];
-		// Pour chaque bouchée
-		//      getResultUnsecured(bouchée)
-		// Rassembler les bouchées
-		return combineResults(smallResults);
+		String [][] smallChunks = splitIntoChunks(operations);
+		int[][] chunkResults = new int[smallChunks.length][];
+		int nbChunks = smallChunks.length;
+		for(int i = 0; i < nbChunks ; i++) {
+			chunkResults[i] = getResultsUnsecured(smallChunks[i]).results;
+		}
+		return combineResults(chunkResults);
 	}
 	
-	private String[][] splitIntoSmallChunks(String[] operations){
-		return new String[1][1];
+	private String[][] splitIntoChunks(String[] operations) throws RemoteException {
+		return Util.splitChunks(operations, minServerCapacity());
 	}
 	
-	private int[] getResultsUnsecured(String[] smallChunk) {
+	private int minServerCapacity() throws RemoteException {
+		int minCapacity = Integer.MAX_VALUE;
+		for(ServerInterface s : serverStubs) {
+			int serverCapacity = s.getCapacity();
+			if (serverCapacity < minCapacity) {
+				minCapacity = serverCapacity;
+			}
+		}
+		System.out.println("minCapcity() returning " + String.valueOf(minCapacity));
+		return minCapacity;
+	}
+	
+	private Response getResultsUnsecured(String[] smallChunk) {
+		System.out.println("getResultsUnsecured()");
+		Response resp = new Response();
 		boolean straightAnswerFound = false;
 		int straightAnswer[] = null;
 		while(!straightAnswerFound) {
 			int[][] answers = new int[serverStubs.length][];
-			// Dispatch work with compute callables
-		
+			//==============================================================
+			int nbServers = serverStubs.length;
+			ExecutorService executor = Executors.newFixedThreadPool(nbServers);
+			ArrayList<Future<Response>> futures = new ArrayList<Future<Response>>();
+
+			// Dispatch work
+			for(int i = 0; i < nbServers ; ++i) {
+				ComputeCallable cc = new ComputeCallable(serverStubs[i], smallChunk, "unsecured", user, password);
+				Future<Response> fut = executor.submit(cc);
+				futures.add(fut);
+			}
+
 			// Wait for results
-			
-			// 
+			for(int i = 0; i < nbServers; ++i) {
+				try {
+					Response subResp = futures.get(i).get();
+					answers[i] = subResp.results;
+				} catch (ExecutionException | InterruptedException e) {
+					//TODO répartition des taches lors de pannes intempestives
+					e.printStackTrace();
+				}
+			}
+			// ==============================================================
 			straightAnswer = getCredibleAnswers(answers);
-			
+			if(straightAnswer != null) {
+				straightAnswerFound = true;
+			}
 		}
-		return new int[1];
+		resp.results = straightAnswer;
+		return resp;
 	}
 	
 	private int[] getCredibleAnswers(int[][] answers) {
@@ -301,13 +342,14 @@ public class Dispatcher implements DispatcherInterface {
 			credibleAnswers[oper] = getCredibleAnswer(operAnswers);
 			
 		}
-		return new int[1];
+		return credibleAnswers;
 	}
 	
 	private int getCredibleAnswer(int[] operAnswers) {
 		// If there are two equal values in the array,
 		// that's the credible answer.
-		return 0;
+		// TODO Complete this bastard
+		return operAnswers[0];
 	}
 
 	/**

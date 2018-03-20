@@ -1,9 +1,8 @@
 #!/bin/bash
 
 hostname=$1
-ldap=$2
-error_rate=$3
-capacity=$4
+
+
 
 java -cp ./bin \
   -Djava.rmi.server.hostname=$hostname \
