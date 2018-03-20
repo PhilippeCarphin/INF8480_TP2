@@ -58,11 +58,6 @@ public class Server implements ServerInterface {
 	public Server() {
 		super();
 		LDAPServerStub = loadLDAPStub(LDAPHostname);
-		try {
-			LDAPServerStub.authenticate("piss", "bucket");
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**

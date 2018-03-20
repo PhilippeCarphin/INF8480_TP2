@@ -226,7 +226,7 @@ public class Dispatcher implements DispatcherInterface {
 
 		// Dispatch work
 		for(int i = 0; i < nbLists ; ++i) {
-			ComputeCallable cc = new ComputeCallable(serverStubs[i], operationLists[i], "secured", "Phil", "password1234");
+			ComputeCallable cc = new ComputeCallable(serverStubs[i], operationLists[i], "secured", user, password);
 			Future<int[]> fut = executor.submit(cc);
 			futures.add(fut);
 
