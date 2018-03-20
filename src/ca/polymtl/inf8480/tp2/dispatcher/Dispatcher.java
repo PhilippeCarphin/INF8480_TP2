@@ -212,6 +212,13 @@ public class Dispatcher implements DispatcherInterface {
 	 * @return arrays of results from individual servers
 	 */
 	private int[][] dispatchInternalSecured(String[][] operationLists){
+		
+		// Based on server capacities, split into a number of parts
+		// equal to the number of servers.
+		// For each server, the compute callable will work out how to
+		// send chunks to their server and will be responsible for the
+		// whole thing
+		// So it will get string[] and return a int[]
 		int nbLists = operationLists.length;
 		int resultParts[][] = new int[nbLists][];
 
@@ -239,6 +246,57 @@ public class Dispatcher implements DispatcherInterface {
 		executor.shutdown();
 
 		return resultParts;
+	}
+	
+	private int[] dispatchInternalUnsecured(String[] operations) {
+		// Splitter en bouché de serveurs
+		String [][] smallChunks = splitIntoSmallChunks(operations);
+		int[][] smallResults = new int[smallChunks.length][];
+		// Pour chaque bouchée
+		//      getResultUnsecured(bouchée)
+		// Rassembler les bouchées
+		return combineResults(smallResults);
+	}
+	
+	private String[][] splitIntoSmallChunks(String[] operations){
+		return new String[1][1];
+	}
+	
+	private int[] getResultsUnsecured(String[] smallChunk) {
+		boolean straightAnswerFound = false;
+		int straightAnswer[] = null;
+		while(!straightAnswerFound) {
+			int[][] answers = new int[serverStubs.length][];
+			// Dispatch work with compute callables
+		
+			// Wait for results
+			
+			// 
+			straightAnswer = getCredibleAnswers(answers);
+			
+		}
+		return new int[1];
+	}
+	
+	private int[] getCredibleAnswers(int[][] answers) {
+		int nbOps = answers[0].length;
+		int nbServers = answers.length;
+		int[] credibleAnswers = new int[nbOps];
+		for(int oper = 0; oper < nbOps ; ++oper) {
+			int[] operAnswers = new int[nbServers];
+			for(int server = 0; server < nbServers; ++server) {
+				operAnswers[server] = answers[server][oper];
+			}
+			credibleAnswers[oper] = getCredibleAnswer(operAnswers);
+			
+		}
+		return new int[1];
+	}
+	
+	private int getCredibleAnswer(int[] operAnswers) {
+		// If there are two equal values in the array,
+		// that's the credible answer.
+		return 0;
 	}
 
 	/**

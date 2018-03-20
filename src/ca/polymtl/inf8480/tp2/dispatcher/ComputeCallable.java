@@ -29,6 +29,18 @@ public class ComputeCallable implements Callable<int[]>
     @Override
     public int[] call() throws Exception
     {
+    		// Responsible for taking operations, and sending chunks of it to 
+    		// to the server
+    		// int[][] resultChunks = ???
+    		// operations -> list<String[]> operationChunks;
+    		// for(chunk in operationChunks){
+    		//      compute and resend until receive value
+    		//		result -> resultChunks
+    		// }
+    		// resultChunks -> results
+    	
+    		// Unsecured:
+    		//
         int[] results;
 
         try
