@@ -33,8 +33,13 @@ public class ComputeCallable implements Callable<int[]>
 
         try
         {
-            results = serverStub.compute(operations, mode, user, password);
-            return results;
+        		// Take a chunk of a certain size based on the server's capacity
+        		// just re-send until I get a good answer.  
+        		results = null;
+        		while(results == null) {
+        			results = serverStub.compute(operations, mode, user, password);
+        		}
+        		return results;
         }
         catch (RemoteException e)
         {

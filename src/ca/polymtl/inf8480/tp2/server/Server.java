@@ -147,7 +147,7 @@ public class Server implements ServerInterface {
 		System.out.println("Server received request, mode=" + mode + ", user=" + user + ", password=" + password);
 		if(refuseWork(operations.length)) {
 			System.out.println("Refusing to work based on operations size");
-			//TODO calcul du nombre de taches et refus éventuel
+			return null;//TODO calcul du nombre de taches et refus éventuel
 		}
 
 		//TODO Ajouter la vérification du taux de refus
