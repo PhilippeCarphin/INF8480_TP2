@@ -1,6 +1,7 @@
 package ca.polymtl.inf8480.tp2.dispatcher;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -41,16 +42,19 @@ public class ComputeCallable implements Callable<int[]>
     	
     		// Unsecured:
     		//
-        int[] results;
-
+    		int serverCapacity = serverStub.getCapacity();
+    		
+        String[][] chunks = splitChunks(operations, serverCapacity);
+        int[][] resultChunks = new int[chunks.length][];
+        
         try
         {
-        		// Take a chunk of a certain size based on the server's capacity
-        		// just re-send until I get a good answer.  
-        		results = null;
-        		while(results == null) {
-        			results = serverStub.compute(operations, mode, user, password);
-        		}
+        		int[] results = null;
+        		for(int i = 0; i < chunks.length ; ++i) {
+        			resultChunks[i] = serverStub.compute(chunks[i], mode, user, password);
+            }
+        		results = combineResults(resultChunks);
+
         		return results;
         }
         catch (RemoteException e)
@@ -58,4 +62,38 @@ public class ComputeCallable implements Callable<int[]>
             throw new Exception();
         }
     }
+    
+    private String[][] splitChunks(String[] operations, int chunkLength){
+
+    		int nbChunks = operations.length / chunkLength;
+    		if( operations.length % chunkLength != 0) {
+    			nbChunks += 1;
+    		}
+		String[][] chunks = new String[nbChunks][];
+		for(int i = 0; i < nbChunks ; ++i) {
+			chunks[i] = Arrays.copyOfRange(operations, i * chunkLength, Math.min((i+1)*chunkLength, operations.length));
+		}
+		return chunks;
+    }
+    
+	private int[] combineResults(int[][] resultParts) {
+		int nbParts = resultParts.length;
+		int nbResults = 0;
+
+		// Need to know how many results we have to allocate memory for
+		// our concatenated array.
+		for(int i = 0; i < nbParts ; ++i) {
+			nbResults += resultParts[i].length;
+		}
+
+		int[] results = new int[nbResults];
+		int offset = 0;
+		for(int i = 0; i < nbParts ; ++i) {
+			nbResults += resultParts[i].length;
+			System.arraycopy(resultParts[i], 0, results, offset, resultParts[i].length);
+			offset += resultParts[i].length;
+		}
+
+		return results;
+	}
 } 

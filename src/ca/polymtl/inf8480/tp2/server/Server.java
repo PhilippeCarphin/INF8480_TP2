@@ -140,6 +140,7 @@ public class Server implements ServerInterface {
 	public int[] compute(String[] operations, String mode, String user, String password) throws RemoteException
 	{
 		System.out.println("Server received request, mode=" + mode + ", user=" + user + ", password=" + password);
+		System.out.println("Number of operation = " + String.valueOf(operations.length));
 		if(refuseWork(operations.length)) {
 			System.out.println("Refusing to work based on operations size");
 			return null;//TODO calcul du nombre de taches et refus éventuel
