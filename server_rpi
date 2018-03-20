@@ -3,4 +3,4 @@
 java -cp ./bin \
   -Djava.rmi.server.hostname=192.168.2.25 \
   -Djava.security.policy=./policy \
-  ca.polymtl.inf8480.tp2.server.Server
+  ca.polymtl.inf8480.tp2.server.Server $*
