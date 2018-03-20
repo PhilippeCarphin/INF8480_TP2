@@ -1,6 +1,6 @@
 #!/bin/bash
-git fetch
-git reset --hard origin/master
+git pull ssh://pcarphin@192.168.2.15/~/Documents/GitHub/INF8480_TP2/
+
 ant
 
 killall rmiregistry
