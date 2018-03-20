@@ -199,6 +199,10 @@ public class Dispatcher implements DispatcherInterface {
 		}
 		return parts;
 	}
+	
+	private int[][] dispatchInternal(String[][] operationLists){
+		return dispatchInternalSecured(operationLists);
+	}
 
 	/**
 	 * Internal details of dispatching.  This method creates threads to dispatch
@@ -207,7 +211,7 @@ public class Dispatcher implements DispatcherInterface {
 	 * @param operationLists Lists of operations to send to individual servers
 	 * @return arrays of results from individual servers
 	 */
-	private int[][] dispatchInternal(String[][] operationLists){
+	private int[][] dispatchInternalSecured(String[][] operationLists){
 		int nbLists = operationLists.length;
 		int resultParts[][] = new int[nbLists][];
 
