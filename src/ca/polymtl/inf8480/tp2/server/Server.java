@@ -35,6 +35,8 @@ public class Server implements ServerInterface {
 
 	private String LDAPHostname = "127.0.0.1";
 	private LDAPInterface LDAPServerStub = null;
+	private static int DEFAULT_NB_OPS_GUARANTEE = 3;
+	private static int nbOpsGuarantee = DEFAULT_NB_OPS_GUARANTEE;
 	private static Integer port = 5014; // Pas sur mais ça pourrait être utile.
 	private static int errorRate = 0;
 
@@ -118,11 +120,16 @@ public class Server implements ServerInterface {
 			System.out.println("You need to pass an argument to determine the error rate (0 - 100).\n");
 		} else {
 			errorRate = Integer.parseInt(args[0]);
-			if (args.length < 2) {
-				port = 5014;
-			} else {
-				port = Integer.parseInt(args[1]);
+			if (args.length > 2) {
+				nbOpsGuarantee = Integer.parseInt(args[1]);
 			}
+		}
+	}
+	
+	private static void printArgs(String[] args) {
+		System.out.println("Command line arguments : ");
+		for(int i = 0; i < args.length; ++i) {
+			System.out.println("   args[" + String.valueOf(i) + "] = " + args[i]);
 		}
 	}
 
@@ -130,7 +137,11 @@ public class Server implements ServerInterface {
 	public int[] compute(String[] operations, String mode, String user, String password) throws RemoteException
 	{
 		System.out.println("Server received request, mode=" + mode + ", user=" + user + ", password=" + password);
-		//TODO calcul du nombre de taches et refus éventuel
+		if(refuseWork(operations.length)) {
+			System.out.println("Refusing to work based on operations size");
+			//TODO calcul du nombre de taches et refus éventuel
+		}
+
 		//TODO Ajouter la vérification du taux de refus
 		if (mode.equals("secured"))
 		{
@@ -167,9 +178,9 @@ public class Server implements ServerInterface {
 			
 			if(malicious) {
 				Random rand = new Random();
-				int  n = rand.nextInt(100) + 1;
+				int  n = rand.nextInt(100);
 	
-				if (n <= errorRate)
+				if (n < errorRate)
 				{
 					rand = new Random();
 					results[i] = rand.nextInt(4001);
@@ -179,6 +190,16 @@ public class Server implements ServerInterface {
 		return results;
 	}
 
+	private Boolean refuseWork(int nbOperations) {
+		if(nbOperations < nbOpsGuarantee) {
+			return false;
+		} else {
+			Random rand = new Random();
+			float chancesToRefuse = (float) ((nbOperations - nbOpsGuarantee)/(5.0*nbOpsGuarantee));
+			float f = rand.nextFloat();
+			return (f < chancesToRefuse);
+		}
+	}
 	/**
 	 * Compute the result of an operation specified by a string.  The first
 	 * word of the string is the name of an operation and the second word
