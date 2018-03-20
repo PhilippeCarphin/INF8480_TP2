@@ -167,6 +167,11 @@ public class Server implements ServerInterface {
 			return computeInternal(operations, true);
 		}
 	}
+	
+	@Override
+	public int getCapacity() {
+		return nbOpsGuarantee;
+	}
 
 	/**
 	 * Compute the result of a list of operations specified by strings.
