@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import ca.polymtl.inf8480.tp2.shared.ServerInterface;
+import ca.polymtl.inf8480.tp2.shared.Response;
 
 public class ComputeCallable implements Callable<int[]>
 {
@@ -51,7 +52,12 @@ public class ComputeCallable implements Callable<int[]>
         {
         		int[] results = null;
         		for(int i = 0; i < chunks.length ; ++i) {
-        			resultChunks[i] = serverStub.compute(chunks[i], mode, user, password).results;
+        			Response resp = serverStub.compute(chunks[i], mode, user, password);
+        			if (resp.code == Response.Code.NO_ERROR) {
+            			resultChunks[i] = resp.results;
+        			} else if (resp.code == Response.Code.AUTH_FAILURE) {
+        				throw new Exception("Authentication failure");
+        			}
             }
         		results = combineResults(resultChunks);
 
