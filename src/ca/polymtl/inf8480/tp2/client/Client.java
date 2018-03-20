@@ -41,7 +41,7 @@ public class Client {
 		parseArgs(args);
 		Client client = new Client(dispatcherIp);
 		try {
-			Response resp = client.dispatcherStub.dispatchTasks(operationsList, "secured", "alice", "apassword");
+			Response resp = client.dispatcherStub.dispatchTasks(operationsList, "unsecured", "alice", "apassword");
 			if(resp.code == Response.Code.AUTH_FAILURE) {
 				System.out.println("Encountered AUTH_FAILURE during operation");
 			} else {
