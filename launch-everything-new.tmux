@@ -13,7 +13,8 @@ send-keys -t 3 'sleep 2 ; ./dispatcher' enter
 
 send-keys -t 4 'sleep 2 ; ./server' enter
 
-send-keys -t 5 'sleep 2 ; ./start-remote-server 192.168.2.25 192.168.2.15 0 8' enter
+send-keys -t 5 'sleep 2 ; ./start-remote-server l4712-11.info.polymtl.ca l4712-10.info.polymtl.ca 0 8' enter
+send-keys -t 6 'sleep 2 ; ./start-remote-server l4712-12.info.polymtl.ca l4712-10.info.polymtl.ca 0 8' enter
 
 # Leave the user in pane number 1 so they may enter commands.
 select-pane -t 1
