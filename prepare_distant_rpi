@@ -1,6 +1,11 @@
 #!/bin/bash
-git pull ssh://pcarphin@192.168.2.15/~/Documents/GitHub/INF8480_TP2/
 
+# Sync up git state
+git fetch imac
+git reset --hard imac/master
+
+# Sync up uncommitted things
+rsync -av 'pcarphin@192.168.2.15:~/Documents/GitHub/INF8480_TP2/*' .
 ant
 
 killall rmiregistry
