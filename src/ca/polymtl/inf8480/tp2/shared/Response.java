@@ -1,6 +1,11 @@
 package ca.polymtl.inf8480.tp2.shared;
 
-
+/**
+ * General purpose class for communication between parts of 
+ * the system
+ * @author pcarphin
+ *
+ */
 public class Response implements java.io.Serializable {
 	public enum Code {
 		NO_ERROR, AUTH_FAILURE, CAPACITY_FAILURE, OTHER_FAILURE

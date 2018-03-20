@@ -30,7 +30,8 @@ public class Client {
 
 	/**
 	 * Parsing of arguments, creation of client object and delegation to
-	 * dispatcher network object.
+	 * dispatcher network object.  The client analyzes the response code
+	 * and takes the appropriate action.
 	 * @param args dispatcher ip and file containing list of operations
 	 */
 	public static void main(String[] args) {

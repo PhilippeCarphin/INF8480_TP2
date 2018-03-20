@@ -31,44 +31,57 @@ public class ComputeCallable implements Callable<Response>
     }
 
     @Override
+    /**
+     * Does all the work of interacting with the server.
+     */
     public Response call() throws Exception, AuthenticationException
     {
+    		if(mode.equals("secured")) {
+    			return callSecured();
+    		} else {
+    			return callSecured(); // Change this of course
+    		}
+    }
+    
+    private Response callUnsecured() throws Exception, AuthenticationException
+    {
     		Response resp = new Response();
-    		// Responsible for taking operations, and sending chunks of it to 
-    		// to the server
-    		// int[][] resultChunks = ???
-    		// operations -> list<String[]> operationChunks;
-    		// for(chunk in operationChunks){
-    		//      compute and resend until receive value
-    		//		result -> resultChunks
-    		// }
-    		// resultChunks -> results
-    	
-    		// Unsecured:
-    		//
-    		int serverCapacity = serverStub.getCapacity();
     		
-        String[][] chunks = splitChunks(operations, serverCapacity);
-        int[][] resultChunks = new int[chunks.length][];
-        
-        try
-        {
-        		int[] results = null;
-        		for(int i = 0; i < chunks.length ; ++i) {
-        			Response subResp = serverStub.compute(chunks[i], mode, user, "pissbucket");
-        			if (subResp.code == Response.Code.NO_ERROR) {
-            			resultChunks[i] = subResp.results;
-        			} else if (subResp.code == Response.Code.AUTH_FAILURE) {
-        				return subResp;
-        			}
-            }
-        		resp.results = combineResults(resultChunks);
-        		return resp;
-        }
-        catch (RemoteException e)
-        {
-            throw new Exception();
-        }
+    		try {
+    			resp = serverStub.compute(operations, "unsecured", user, password);
+    		} catch (RemoteException e) {
+    			e.printStackTrace();
+    		}
+    		
+    		return resp;
+    }
+    
+    private Response callSecured() throws Exception, AuthenticationException
+    {
+	    	Response resp = new Response();
+	    	
+		int serverCapacity = serverStub.getCapacity();
+	    String[][] chunks = splitChunks(operations, serverCapacity);
+	    int[][] resultChunks = new int[chunks.length][];
+	    
+	    try
+	    {
+	    		int[] results = null;
+	    		for(int i = 0; i < chunks.length ; ++i) {
+	    			Response subResp = serverStub.compute(chunks[i], "secured", user, password);
+	    			if (subResp.code == Response.Code.NO_ERROR) {
+	        			resultChunks[i] = subResp.results;
+	    			} else if (subResp.code == Response.Code.AUTH_FAILURE) {
+	    				return subResp;
+	    			}
+	        }
+	    		resp.results = combineResults(resultChunks);
+	    		return resp;
+	    }
+	    catch (RemoteException e)
+	    {
+	        throw e;
+	    }
     }
     
     private String[][] splitChunks(String[] operations, int chunkLength){
