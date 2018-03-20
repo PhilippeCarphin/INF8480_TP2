@@ -33,7 +33,7 @@ import java.io.BufferedReader;
 
 public class Server implements ServerInterface {
 
-	private String LDAPHostname = "127.0.0.1";
+	private static String LDAPHostname = "127.0.0.1";
 	private LDAPInterface LDAPServerStub = null;
 	private static int DEFAULT_NB_OPS_GUARANTEE = 3;
 	private static int nbOpsGuarantee = DEFAULT_NB_OPS_GUARANTEE;
@@ -57,7 +57,12 @@ public class Server implements ServerInterface {
 	 */
 	public Server() {
 		super();
-		// LDAPServerStub = loadLDAPStub(LDAPHostname);
+		LDAPServerStub = loadLDAPStub(LDAPHostname);
+		try {
+			LDAPServerStub.authenticate("piss", "bucket");
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -120,8 +125,11 @@ public class Server implements ServerInterface {
 			System.out.println("You need to pass an argument to determine the error rate (0 - 100).\n");
 		} else {
 			errorRate = Integer.parseInt(args[0]);
-			if (args.length > 2) {
+			if (args.length > 1) {
 				nbOpsGuarantee = Integer.parseInt(args[1]);
+				if (args.length > 2) {
+					LDAPHostname = args[2];
+				}
 			}
 		}
 	}

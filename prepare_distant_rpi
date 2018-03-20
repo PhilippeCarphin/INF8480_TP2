@@ -7,7 +7,7 @@ killall rmiregistry
 sleep 1
 CLASSPATH=bin rmiregistry &
 
-./server_rpi &
+./server_rpi 0 30 192.168.2.15 &
 
 read
 

@@ -11,7 +11,7 @@ send-keys -t 2 'sleep 1 ; ./LDAP asdf' enter
 
 send-keys -t 3 'sleep 2 ; ./dispatcher' enter
 
-send-keys -t 4 'sleep 2 ; ./server' enter
+send-keys -t 4 'sleep 2 ; ./server 0 50 localhost' enter
 
 send-keys -t 5 'sleep 2 ; ssh pi@rpi "cd Documents/GitHub/INF8480_TP2 ; ./prepare_distant_rpi"' enter
 
