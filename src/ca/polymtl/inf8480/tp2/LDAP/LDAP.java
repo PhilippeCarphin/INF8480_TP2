@@ -41,7 +41,8 @@ public class LDAP implements LDAPInterface {
         // Le script qui demarre LDAP à l'école envoit un argument bidon de plus.
         servers[0] = "127.0.0.1";
 		if( args.length < 1 ){
-			servers[1] = "l4712-02.info.polymtl.ca";
+			servers[1] = "l4712-18.info.polymtl.ca";
+			servers[2] = "l4712-19.info.polymtl.ca";
 		} else {
 			servers[1] = "192.168.2.25";
 		}

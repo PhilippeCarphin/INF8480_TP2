@@ -41,7 +41,7 @@ public class Client {
 		parseArgs(args);
 		Client client = new Client(dispatcherIp);
 		try {
-			Response resp = client.dispatcherStub.dispatchTasks(operationsList, "unsecured", "alice", "apassword");
+			Response resp = client.dispatcherStub.dispatchTasks(operationsList, "secured", "alice", "apassword");
 			if(resp.code == Response.Code.AUTH_FAILURE) {
 				System.out.println("Encountered AUTH_FAILURE during operation");
 			} else {
@@ -67,9 +67,12 @@ public class Client {
 	 * @param results array to print
 	 */
 	private static void printResults(int[] results) {
+		int accumulator = 0;
 		for(int i = 0; i < results.length; ++i) {
+			accumulator = (accumulator + results[i]) % 4000;
 			System.out.println("Results[" + String.valueOf(i) + "] = " + String.valueOf(results[i]));
 		}
+		System.out.println("Accumulator = " + String.valueOf(accumulator));
 	}
 
 	/**

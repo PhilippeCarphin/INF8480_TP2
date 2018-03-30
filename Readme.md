@@ -73,7 +73,7 @@ Dans un terminal on lance TMUX:
 
 Une fois dans tmux, on charge le fichier launch-everything-school.tmux:
 
-	$ tmux source-file launch-everything-school.tmux
+	$ tmux source-file launch-everything-new.tmux
 
 La fenêtre sera séparée en plusieurs "panneaux" et toutes les commandes
 mentionnées ci-haut seront envoyées à des panneaux différents.

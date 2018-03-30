@@ -5,7 +5,16 @@ ldap=$2
 error_rate=$3
 capacity=$4
 
+if [[ "$hostname" == "192.168.2.25" ]] ; then
+	git fetch imac
+	git reset --hard imac/master
+	# Sync up uncommitted things
+	rsync -av 'pcarphin@192.168.2.15:~/Documents/GitHub/INF8480_TP2/*' .
+	ant
+fi
+
 killall rmiregistry
+killall java
 sleep 1
 CLASSPATH=bin rmiregistry &
 
